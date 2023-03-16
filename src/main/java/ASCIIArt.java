@@ -4,10 +4,11 @@ import java.io.IOException;
 public class ASCIIArt {
     
     /*
-    TODO: fix Java decimals error caused by multiplication in PixelConverter
-          create UserInterface class
+    TODO:
           create Exceptions
           fileName consists invertStatus
+		  ASCII looks a bit stretched out - work on the width
+		  provide a suggestion system for an optimal scaling value
      */
     
     public static final char[][] STYLES = UserInterface.getStyles();

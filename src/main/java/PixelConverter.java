@@ -49,8 +49,13 @@ public class PixelConverter {
 
     private char toChar(double brightness, double interspace) {
         int index = (int) (brightness / interspace);
-        char ch = ASCIIArt.CHARS[index];
-        return ch;
+        try {
+            char ch = ASCIIArt.CHARS[index];
+            return ch;
+        } catch(ArrayIndexOutOfBoundsException e) {
+            char ch = ASCIIArt.CHARS[ASCIIArt.CHARS.length - 1];
+            return ch;
+        }
     }
 
     public char[][] charMatrix(char choice) {

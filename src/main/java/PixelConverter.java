@@ -1,27 +1,37 @@
 
 import java.util.Arrays;
 
-
 public class PixelConverter {
 
     private int[][][] pixels;
+    private boolean invert;
 
-    public PixelConverter(int[][][] pixels) {
+    public PixelConverter(int[][][] pixels, boolean invert) {
         this.pixels = pixels;
+        this.invert = invert;
     }
 
     private double brightnessLevel(int[] pixel, char choice) {
+        double result = 0;
         switch(choice) {
             case '1':
-                return (pixel[0] + pixel[1] + pixel[2]) / 3.0;
+                result = (pixel[0] + pixel[1] + pixel[2]) / 3.0;
+                break;
             case '2':
                 int min = Arrays.stream(pixel).min().getAsInt();
                 int max = Arrays.stream(pixel).max().getAsInt();
-                return (max + min) / 2;
+                result = (max + min) / 2;
+                break;
             case '3':
-                return pixel[0] * 0.21 + pixel[1] * 0.72 + pixel[2] * 0.07;
+                result = pixel[0] * 0.21 + pixel[1] * 0.72 + pixel[2] * 0.07;
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
-            throw new IllegalArgumentException();
+        if(invert) {
+            result = 255 - result;
+        }
+        return result;       
     }
 
     private double[][] brightnessMatrix(char choice) {
@@ -47,7 +57,7 @@ public class PixelConverter {
         char[][] chMatrix = new char[pixels.length][pixels[0].length * 3];
         double[][] brightnessMatrix = brightnessMatrix(choice);
 
-        double interspace = 255.0 / (ASCIIArt.CHARS.length - 1);
+        double interspace = 255.0 / ASCIIArt.CHARS.length;
 
         for (int i = 0; i < chMatrix.length; i++) {
             for (int y = 0; y < chMatrix[0].length; y += 3) {
@@ -70,5 +80,5 @@ public class PixelConverter {
             }
         }
         return newPic;
-    }
+    }  
 }

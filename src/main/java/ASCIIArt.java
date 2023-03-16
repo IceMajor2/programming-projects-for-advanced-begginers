@@ -7,6 +7,7 @@ public class ASCIIArt {
     TODO: fix Java decimals error caused by multiplication in PixelConverter
           create UserInterface class
           create Exceptions
+          fileName consists invertStatus
      */
     
     public static final char[][] STYLES = UserInterface.getStyles();
@@ -19,7 +20,7 @@ public class ASCIIArt {
         try {
             UI.start();
         } catch (IOException e) {
-            System.out.println("Błąd wejścia-wyjścia.");
+            System.out.println(e);
         }
     }
 }

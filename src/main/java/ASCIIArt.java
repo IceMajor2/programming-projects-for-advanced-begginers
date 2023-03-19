@@ -10,7 +10,7 @@ public class ASCIIArt {
             list imgs
      */
     
-    public static final char[][] STYLES = UserInterface.getStyles();
+    public static final char[][] STYLES = ProgramLogic.getStyles();
     public static final String PATH
             = "C:\\Users\\IceMajor\\Documents\\NetBeansProjects\\ASCIIArt\\";
     public static char[] CHARS = null;

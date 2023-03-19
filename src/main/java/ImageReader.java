@@ -17,6 +17,14 @@ public class ImageReader {
         this.width = this.image.getWidth();
     }
 
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
     public int[][][] getPixelArray() {
         int[][][] pixels = new int[height][width][3];
         for (int y = 0; y < height; y++) {

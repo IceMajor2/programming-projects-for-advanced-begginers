@@ -20,6 +20,9 @@ public class UserInterface {
 
         while (true) {
             ImageReader reader = new ImageReader(ASCIIArt.PATH + "imgs\\" + imgName);
+            int[][][] pixels = reader.getPixelArray();
+            int height = pixels.length;
+            int width = pixels[0].length;
 
             printMenu(invertedStatus);
             char input = scanner.next().charAt(0);
@@ -34,8 +37,13 @@ public class UserInterface {
                 scaleDown = -1;
                 continue;
             }
+            if (input == '6') {
+                invertedStatus = invertedStatus == false;
+                continue;
+            }
             if (scaleDown == -1 || input == '4') {
-                System.out.print("Scale down the image (int only): ");
+                System.out.print("Scale down the image (int only; preffered: "
+                        + dimensionsHint(height, width) + "): ");
                 scaleDown = Integer.valueOf(scanner.nextLine());
                 if (input == '4') {
                     continue;
@@ -59,16 +67,11 @@ public class UserInterface {
                     continue;
                 }
             }
-            if (input == '6') {
-                invertedStatus = invertedStatus == false;
-                continue;
-            }
 
-            int[][][] pixels = reader.getPixelArray();
             PixelConverter converter = new PixelConverter(pixels, invertedStatus);
             char[][] chMatrix = converter.charMatrix(input);
             char[][] scaledArt = PixelConverter.scaleDown(chMatrix, scaleDown);
-            
+
             String ascii = asciiInString(scaledArt);
             ASCIIImageFileCreator file = new ASCIIImageFileCreator(imgName,
                     input, styleChoice, invertedStatus);
@@ -77,7 +80,7 @@ public class UserInterface {
         }
     }
 
-    public String asciiInString(char[][] arr) {
+    private String asciiInString(char[][] arr) {
         StringBuilder output = new StringBuilder("");
         for (char[] row : arr) {
             for (char ch : row) {
@@ -86,6 +89,15 @@ public class UserInterface {
             output.append("\n");
         }
         return output.toString();
+    }
+
+    private int dimensionsHint(int height, int width) {
+        int divisor = 1;
+        while ((height / divisor > 150 && width / divisor > 250)
+                || (width / divisor > 150 && height / divisor > 250)) {
+            divisor++;
+        }
+        return divisor;
     }
 
     public static char[][] getStyles() {
@@ -97,7 +109,7 @@ public class UserInterface {
         return new char[][]{set01, set02};
     }
 
-    public void printMenu(boolean inverted) {
+    private void printMenu(boolean inverted) {
         System.out.println("'1' = ASCII_ART (AVERAGE)"
                 + "\n'2' = ASCII_ART (MIN_MAX)"
                 + "\n'3' = ASCII_ART (WEIGHTED AVERAGE)"

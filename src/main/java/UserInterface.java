@@ -1,8 +1,6 @@
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.io.FileWriter;
-import java.nio.charset.Charset;
 
 public class UserInterface {
 
@@ -15,29 +13,24 @@ public class UserInterface {
     public void start() throws IOException {
         System.out.print("Welcome to ASCII Art Converter."
                 + "\nImage file: ");
-        String fileName = scanner.nextLine();
+        String imgName = scanner.nextLine();
         int scaleDown = -1;
+        int styleChoice = -1;
         boolean invertedStatus = false;
 
         while (true) {
-            ImageReader reader = new ImageReader(ASCIIArt.PATH + "imgs\\" + fileName);
+            ImageReader reader = new ImageReader(ASCIIArt.PATH + "imgs\\" + imgName);
 
-            System.out.println("'1' = ASCII_ART (AVERAGE)"
-                    + "\n'2' = ASCII_ART (MIN_MAX)"
-                    + "\n'3' = ASCII_ART (WEIGHTED AVERAGE)"
-                    + "\n'4' = scale down by..."
-                    + "\n'5' = change ASCII style"
-                    + "\n'6' = invert? (now: " + invertedStatus + ")"
-                    + "\n'9' = change image"
-                    + "\n'0' = exit program");
+            printMenu(invertedStatus);
             char input = scanner.next().charAt(0);
             scanner.nextLine();
+
             if (input == '0') {
                 break;
             }
             if (input == '9') {
                 System.out.print("New file is: ");
-                fileName = scanner.nextLine();
+                imgName = scanner.nextLine();
                 scaleDown = -1;
                 continue;
             }
@@ -59,9 +52,9 @@ public class UserInterface {
                     }
                     System.out.println("");
                 }
-                int styleChoice = scanner.nextInt() - 1;
+                styleChoice = scanner.nextInt();
                 scanner.nextLine();
-                ASCIIArt.CHARS = ASCIIArt.STYLES[styleChoice];
+                ASCIIArt.CHARS = ASCIIArt.STYLES[styleChoice - 1];
                 if (input == '5') {
                     continue;
                 }
@@ -75,29 +68,13 @@ public class UserInterface {
             PixelConverter converter = new PixelConverter(pixels, invertedStatus);
             char[][] chMatrix = converter.charMatrix(input);
             char[][] scaledArt = PixelConverter.scaleDown(chMatrix, scaleDown);
-
+            
             String ascii = asciiInString(scaledArt);
-            outputToFile(outputFileName(fileName, input), ascii);
+            ASCIIImageFileCreator file = new ASCIIImageFileCreator(imgName,
+                    input, styleChoice, invertedStatus);
+            file.writeFile(ascii);
             System.out.println(ascii);
         }
-    }
-
-    public void outputToFile(String fileName, String content) {
-        try (FileWriter writer = new FileWriter(ASCIIArt.PATH + "\\outputs\\" + fileName,
-                Charset.forName("UTF-8"))) {
-            writer.write(content);
-            writer.flush();
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    public String outputFileName(String img, char choice) {
-        StringBuilder outputFile = new StringBuilder(img);
-        outputFile.delete(outputFile.lastIndexOf("."), outputFile.length());
-        outputFile.append(choice);
-        outputFile.append(".txt");
-        return outputFile.toString();
     }
 
     public String asciiInString(char[][] arr) {
@@ -118,5 +95,16 @@ public class UserInterface {
         char[] set02 = "█▓▒░".toCharArray();
 
         return new char[][]{set01, set02};
+    }
+
+    public void printMenu(boolean inverted) {
+        System.out.println("'1' = ASCII_ART (AVERAGE)"
+                + "\n'2' = ASCII_ART (MIN_MAX)"
+                + "\n'3' = ASCII_ART (WEIGHTED AVERAGE)"
+                + "\n'4' = scale down by..."
+                + "\n'5' = change ASCII style"
+                + "\n'6' = invert? (now: " + inverted + ")"
+                + "\n'9' = change image"
+                + "\n'0' = exit program");
     }
 }

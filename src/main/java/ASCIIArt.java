@@ -6,7 +6,6 @@ public class ASCIIArt {
     /*
     TODO:
             create Exceptions
-            fileName consists invertStatus
             ASCII looks a bit stretched out - work on the width
             provide a suggestion system for an optimal scaling value
      */

@@ -13,9 +13,17 @@ public class UserInterface {
     }
 
     public void start() throws IOException {
-        System.out.print("Welcome to ASCII Art Converter."
-                + "\nImage file: ");
-        String imgName = scanner.nextLine();
+        System.out.println("Welcome to ASCII Art Converter.");
+        String imgName = null;
+        while (true) {
+            System.out.print("Image file ('Y' to list images): ");
+            imgName = scanner.nextLine();
+            if (imgName.length() == 1 && imgName.equals("Y")) {
+                logic.listFiles(ASCIIArt.PATH + "\\imgs");
+                continue;
+            }
+            break;
+        }
         int scaleDown = -1;
         int styleChoice = -1;
         boolean invertedStatus = false;
@@ -32,8 +40,16 @@ public class UserInterface {
                 break;
             }
             if (input == '9') {
-                System.out.print("New file is: ");
-                imgName = scanner.nextLine();
+                while (true) {
+                    System.out.print("New file is (write 'Y' if you want to list"
+                            + "available images): ");
+                    imgName = scanner.nextLine();
+                    if (imgName.length() == 1 && imgName.equals("Y")) {
+                        logic.listFiles(ASCIIArt.PATH + "\\imgs");
+                        continue;
+                    }
+                    break;
+                }
                 scaleDown = -1;
                 continue;
             }

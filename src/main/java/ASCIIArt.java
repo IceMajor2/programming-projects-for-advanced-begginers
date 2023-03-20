@@ -5,9 +5,7 @@ public class ASCIIArt {
     
     /*
     TODO:
-            create Exceptions
             ASCII looks a bit stretched out - work on the width
-            list imgs
      */
     
     public static final char[][] STYLES = ProgramLogic.getStyles();

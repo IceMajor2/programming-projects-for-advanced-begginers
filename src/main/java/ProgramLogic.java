@@ -1,5 +1,6 @@
 
 import java.io.IOException;
+import java.io.File;
 
 public class ProgramLogic {
 
@@ -56,5 +57,15 @@ public class ProgramLogic {
         char[] set02 = "█▓▒░".toCharArray();
 
         return new char[][]{set01, set02};
+    }
+    
+    public void listFiles(String path) {
+        File files = new File(path);
+        for(String file : files.list()) {
+            if(file.equals(".gitignore")) {
+                continue;
+            }
+            System.out.println(file);
+        }
     }
 }

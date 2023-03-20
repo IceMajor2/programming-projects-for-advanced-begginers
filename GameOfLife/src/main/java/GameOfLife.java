@@ -1,10 +1,24 @@
 
 import java.util.Random;
+import java.io.IOException;
 
 public class GameOfLife {
 
     public static void main(String[] args) {
-        
+        int[][] board = randomState(21, 15);
+        while(true) {
+            render(board);
+            board = nextBoardState(board);
+            try {
+                Thread.sleep(300);
+                clearConsole();
+            } catch(InterruptedException e) {
+                System.out.println(e);
+            } catch(IOException e) {
+                System.out.println(e);
+            }
+            
+        }
     }
 
     public static int[][] randomState(int height, int width) {
@@ -64,7 +78,6 @@ public class GameOfLife {
 
     public static int aliveNeighbors(int[][] board, int x, int y) {
         int cell = board[x][y];
-        //int[] neighbors = new int[8];
         int aliveNeighbors = 0;
         for (int pointer = 0, a = x - 1; a < x + 2; a++) {
             for (int b = y - 1; b < y + 2; b++, pointer++) {
@@ -84,12 +97,8 @@ public class GameOfLife {
         return aliveNeighbors;
     }
     
-    /*private static int nextFreeIndex(int[] arr) {
-        for(int i = 0; i < arr.length; i++) {
-            if(arr[i] == 0) {
-                return i;
-            }
-        }
-        return -1;
-    }*/
+    public static void clearConsole(String ... args) throws IOException, InterruptedException {
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    }
+    
 }

@@ -9,7 +9,7 @@ TODO:
 
 public class GameOfLife {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         UserInterface UI = new UserInterface();
         try {
            UI.run(); 

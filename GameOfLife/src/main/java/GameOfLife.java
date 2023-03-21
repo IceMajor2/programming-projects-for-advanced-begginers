@@ -6,23 +6,28 @@ import java.util.Scanner;
 
 public class GameOfLife {
 
+    public static int[][] BOARD = null;
+
     public static void main(String[] args) {
-        int[][] board = loadStateFromTXT("toad");
-        render(board);
-        board = nextBoardState(board);
-        render(board);
-        /*while(true) {
-            render(board);
-            board = nextBoardState(board);
+        System.out.print("Open LIFE from file? (hit ENTER for random) ");
+        Scanner scanner = new Scanner(System.in);
+        String file = scanner.nextLine();
+        if (file.isEmpty()) {
+            System.out.println("Dimensions of the board? (ex: 64 32) ");
+            String dimensions = scanner.nextLine();
+            int height = Integer.valueOf(dimensions.split(" ")[0]);
+            int width = Integer.valueOf(dimensions.split(" ")[1]);
+            BOARD = randomState(height, width);
+        } else {
             try {
-                Thread.sleep(1000);
-                //clearConsole();
-            } catch(InterruptedException e) {
-                System.out.println(e);
-            } //catch(IOException e) {
-              //  System.out.println(e);
-            //}
-        }*/
+                BOARD = loadStateFromTXT(file);
+            } catch (IOException e) {
+                System.out.println("Did not read file.");
+            }
+        }
+        if (BOARD != null) {
+            runForever();
+        }
     }
 
     public static int[][] randomState(int height, int width) {
@@ -107,17 +112,16 @@ public class GameOfLife {
         new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); // this lags as shit
     }
 
-    public static int[][] loadStateFromTXT(String file) {
+    public static int[][] loadStateFromTXT(String file) throws IOException {
         StringBuilder fileContent = new StringBuilder("");
-        try (Scanner scanner = new Scanner(new File(
-                file + ".txt"))) {
-            while (scanner.hasNextLine()) {
-                fileContent.append(scanner.nextLine());
-                fileContent.append("\n");
-            }
-        } catch (IOException e) {
-            System.out.println("Error reading " + file + ".txt");
+        Scanner scanner = new Scanner(new File(
+                "E:\\Dokumenty\\Projekty obecne\\[CODE]\\Programy\\PPfAB\\GameOfLife\\"
+                + file + ".txt"));
+        while (scanner.hasNextLine()) {
+            fileContent.append(scanner.nextLine());
+            fileContent.append("\n");
         }
+
         String[] strBoard = fileContent.toString().split("\n");
         int[][] board = new int[strBoard.length][strBoard[0].length()];
 
@@ -127,6 +131,25 @@ public class GameOfLife {
             }
         }
         return board;
+    }
+
+    public static void runForever(int delay) {
+        while (true) {
+            render(BOARD);
+            BOARD = nextBoardState(BOARD);
+            try {
+                Thread.sleep(delay);
+                //clearConsole();
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            } //catch(IOException e) {
+            //  System.out.println(e);
+            //}
+        }
+    }
+
+    public static void runForever() {
+        runForever(1000);
     }
 
 }

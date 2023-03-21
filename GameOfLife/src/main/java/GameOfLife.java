@@ -26,7 +26,9 @@ public class GameOfLife {
             }
         }
         if (BOARD != null) {
-            runForever();
+            System.out.print("How often should board be updated? (in ms) ");
+            long delay = scanner.nextLong();
+            runForever(delay);
         }
     }
 
@@ -133,7 +135,7 @@ public class GameOfLife {
         return board;
     }
 
-    public static void runForever(int delay) {
+    public static void runForever(long delay) {
         while (true) {
             render(BOARD);
             BOARD = nextBoardState(BOARD);

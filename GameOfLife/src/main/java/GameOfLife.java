@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.io.File;
 import java.util.Scanner;
 
+/*
+TODO:
+- enable user to determine the game of life's rules
+- create killer cell (natural killers? ^^)
+- cell can resurrect itself
+*/
+
 public class GameOfLife {
 
     public static int[][] BOARD = null;

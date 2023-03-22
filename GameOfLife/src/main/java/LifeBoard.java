@@ -8,10 +8,12 @@ public class LifeBoard {
 
     public LifeBoard(int height, int width) {
         this.board = this.randomState(height, width);
+        this.revivalChance = 1.01;
     }
 
     public LifeBoard(Cell[][] board) {
         this.board = board;
+        this.revivalChance = 1.01;
     }
 
     public int aliveNeighbors(Cell cell) {
@@ -57,6 +59,10 @@ public class LifeBoard {
         this.board = board;
     }
 
+    public void setRevivalChance(double revivalChance) {
+        this.revivalChance = revivalChance;
+    }
+
     public Cell[][] nextBoardState() {
         Cell[][] nextBoard = new Cell[board.length][board[0].length];
         for (int i = 0; i < board.length; i++) {
@@ -90,7 +96,7 @@ public class LifeBoard {
 
     private void tryRevive(Cell cell) {
         Random random = new Random();
-        if (random.nextDouble() >= revivalChance) {
+        if (random.nextDouble() <= revivalChance) {
             cell.setStatus(1);
         }
     }

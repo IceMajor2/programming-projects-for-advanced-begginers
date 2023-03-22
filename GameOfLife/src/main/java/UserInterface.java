@@ -31,6 +31,12 @@ public class UserInterface {
         }
         System.out.print("How often should board be updated? (in ms) ");
         long delay = scanner.nextLong();
+        scanner.nextLine();
+        System.out.print("Chances for a random revival of a cell? [0-1] ");
+        String revivalInput = scanner.nextLine();
+        if(!revivalInput.isEmpty()) {
+            board.setRevivalChance(Double.valueOf(revivalInput));
+        }
         logic.runForever(board, delay);
     }
 }

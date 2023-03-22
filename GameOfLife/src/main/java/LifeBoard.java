@@ -4,11 +4,12 @@ import java.util.Random;
 public class LifeBoard {
 
     private Cell[][] board;
+    private double revivalChance;
 
     public LifeBoard(int height, int width) {
         this.board = this.randomState(height, width);
     }
-    
+
     public LifeBoard(Cell[][] board) {
         this.board = board;
     }
@@ -34,7 +35,7 @@ public class LifeBoard {
         }
         return aliveNeighbors;
     }
-    
+
     private Cell[][] randomState(int height, int width) {
         Cell[][] board = new Cell[height][width];
         Random random = new Random();
@@ -55,7 +56,7 @@ public class LifeBoard {
     public void setBoard(Cell[][] board) {
         this.board = board;
     }
-    
+
     public Cell[][] nextBoardState() {
         Cell[][] nextBoard = new Cell[board.length][board[0].length];
         for (int i = 0; i < board.length; i++) {
@@ -73,14 +74,24 @@ public class LifeBoard {
                 if (aliveNeighbors == 3) {
                     cell.setStatus(1);
                 }
+                if (cell.getStatus() == -1) {
+                    tryRevive(cell);
+                }
                 nextBoard[i][y] = cell;
             }
         }
         setBoard(nextBoard);
         return nextBoard;
     }
-    
+
     public Cell get(int i, int y) {
         return this.board[i][y];
+    }
+
+    private void tryRevive(Cell cell) {
+        Random random = new Random();
+        if (random.nextDouble() >= revivalChance) {
+            cell.setStatus(1);
+        }
     }
 }

@@ -4,18 +4,19 @@ import java.io.IOException;
 
 public class UserInterface {
 
+    private LifeBoard board;
     private Scanner scanner;
     private ProgramLogic logic;
 
     public UserInterface() {
         this.scanner = new Scanner(System.in);
         this.logic = new ProgramLogic();
+        this.board = GameOfLife.board;
     }
 
     public void run() throws IOException {
         System.out.print("Open LIFE from file? (hit ENTER for random) ");
         String file = scanner.nextLine();
-        LifeBoard board = null;
         if (file.isEmpty()) {
             System.out.println("Dimensions of the board? (ex: 64 32) ");
             String dimensions = scanner.nextLine();
@@ -27,6 +28,7 @@ public class UserInterface {
                 board = new LifeBoard(logic.loadStateFromTXT(file));
             } catch (IOException e) {
                 System.out.println("Did not read file.");
+                return;
             }
         }
         System.out.print("How often should board be updated? (in ms) ");
@@ -34,7 +36,7 @@ public class UserInterface {
         scanner.nextLine();
         System.out.print("Chances for a random revival of a cell? [0-1] ");
         String revivalInput = scanner.nextLine();
-        if(!revivalInput.isEmpty()) {
+        if (!revivalInput.isEmpty()) {
             board.setRevivalChance(Double.valueOf(revivalInput));
         }
         logic.runForever(board, delay);

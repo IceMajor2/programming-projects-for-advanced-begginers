@@ -16,7 +16,8 @@ public class LifeBoard {
         this.revivalChance = 1.01;
     }
 
-    public int aliveNeighbors(Cell cell) {
+    public Cell[] aliveNeighbors(Cell cell) {
+        Cell[] neighbors = new Cell[8];
         int aliveNeighbors = 0;
         int x = cell.getX();
         int y = cell.getY();
@@ -27,15 +28,55 @@ public class LifeBoard {
                 }
                 try {
                     Cell neighbor = board[a][b];
-                    if (neighbor.getStatus() == 1) {
-                        aliveNeighbors++;
+                    if (neighbor.getStatus() != 1) {
+                        continue;
                     }
+                    if (neighbor instanceof NaturalKiller) {
+                        if (!isDirectlyNextTo(cell, neighbor)) {
+                            continue;
+                        }
+                    }
+                    neighbors[aliveNeighbors] = neighbor;
+                    aliveNeighbors++; 
                 } catch (ArrayIndexOutOfBoundsException e) {
                     continue;
                 }
             }
         }
-        return aliveNeighbors;
+        if(neighbors[0] == null) {
+            return new Cell[] {};
+        }
+        Cell[] noNulls = new Cell[aliveNeighbors];
+        System.arraycopy(neighbors, 0, noNulls, 0, aliveNeighbors);
+        return noNulls;
+    }
+    
+    public Cell[] friendlyCellNeighbors(Cell cell) {
+        int counter = 0;
+        Cell[] totalNeighbors = this.aliveNeighbors(cell);
+        Cell[] onlyFriends = new Cell[totalNeighbors.length];
+        for(Cell c : totalNeighbors) {
+            if(c instanceof NaturalKiller) {
+                continue;
+            }
+            onlyFriends[counter] = c;
+            counter++;
+        }
+        System.arraycopy(onlyFriends, 0, onlyFriends, 0, counter);
+        return onlyFriends;
+    }
+
+    private boolean isDirectlyNextTo(Cell c1, Cell c2) {
+        int x1 = c1.getX();
+        int y1 = c1.getY();
+        int x2 = c2.getX();
+        int y2 = c2.getY();
+
+        if (x1 == x2 && (y1 == y2 + 1 || y1 == y2 - 1)
+                || y1 == y2 && (x1 == x2 + 1 || x1 == x2 - 1)) {
+            return true;
+        }
+        return false;
     }
 
     private Cell[][] randomState(int height, int width) {
@@ -68,7 +109,7 @@ public class LifeBoard {
         for (int i = 0; i < board.length; i++) {
             for (int y = 0; y < board[i].length; y++) {
                 Cell cell = new Cell(board[i][y]);
-                int aliveNeighbors = aliveNeighbors(cell);
+                int aliveNeighbors = aliveNeighbors(cell).length;
                 if (cell.getStatus() == 1) {
                     if (aliveNeighbors <= 1 || aliveNeighbors > 3) {
                         cell.setStatus(-1);

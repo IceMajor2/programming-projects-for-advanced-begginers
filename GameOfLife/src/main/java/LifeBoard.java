@@ -51,18 +51,19 @@ public class LifeBoard {
         return noNulls;
     }
     
-    public Cell[] friendlyCellNeighbors(Cell cell) {
+    public Cell[] directNeighbors(Cell cell) {
         int counter = 0;
         Cell[] totalNeighbors = this.aliveNeighbors(cell);
         Cell[] onlyFriends = new Cell[totalNeighbors.length];
         for(Cell c : totalNeighbors) {
-            if(c instanceof NaturalKiller) {
-                continue;
-            }
             onlyFriends[counter] = c;
             counter++;
         }
-        System.arraycopy(onlyFriends, 0, onlyFriends, 0, counter);
+        if(onlyFriends[0] == null) {
+            return new Cell[] {};
+        }
+        Cell[] onlyNotNullFriends = new Cell[counter];
+        System.arraycopy(onlyFriends, 0, onlyNotNullFriends, 0, counter);
         return onlyFriends;
     }
 
@@ -131,8 +132,8 @@ public class LifeBoard {
         return nextBoard;
     }
 
-    public Cell get(int i, int y) {
-        return this.board[i][y];
+    public Cell get(int x, int y) {
+        return this.board[x][y];
     }
 
     private void tryRevive(Cell cell) {
@@ -140,5 +141,13 @@ public class LifeBoard {
         if (random.nextDouble() <= revivalChance) {
             cell.setStatus(1);
         }
+    }
+    
+    public void delete(int x, int y) {
+        board[x][y].setStatus(-1);
+    }
+    
+    public void put(Cell cell, int x, int y) {
+        board[x][y] = cell;
     }
 }

@@ -2,8 +2,8 @@
 public class Cell {
     
     private int status;
-    private int x;
-    private int y;
+    protected int x;
+    protected int y;
     
     public Cell(int x, int y, int status) {
         this.status = status;

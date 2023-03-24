@@ -8,7 +8,7 @@ public class ProgramLogic {
     public Cell[][] loadStateFromTXT(String file) throws IOException {
         StringBuilder fileContent = new StringBuilder("");
         Scanner scanner = new Scanner(new File(
-                "C:\\Users\\Ja\\Desktop\\ProjektyJava\\PPfAB\\GameOfLife\\"
+                "E:\\Dokumenty\\Projekty obecne\\[CODE]\\Programy\\PPfAB\\GameOfLife\\"
                 + file + ".txt"));
         while (scanner.hasNextLine()) {
             fileContent.append(scanner.nextLine());

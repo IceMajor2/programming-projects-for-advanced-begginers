@@ -10,7 +10,9 @@ public class TicTacToe {
         char player = 'X';
         int moves = 0;
         while (moves != 9 && winner(board, moves) == '\0') {
-            makeMove(board, player);
+            System.out.print(player + "'s move: ");
+            int[] cords = getMove(board, player);
+            board = makeMove(board, player, cords);
             moves++;
             render(board);
             player = (player == 'X') ? 'O' : 'X';
@@ -23,24 +25,51 @@ public class TicTacToe {
         }
     }
 
-    public static void makeMove(char[][] board, char player) {
+    public static int[] getMove(char[][] board, char player) {
         Scanner scanner = new Scanner(System.in);
+        int[] cords = new int[2];
         while (true) {
-            System.out.print(player + "'s move: ");
             int x = scanner.nextInt();
             int y = scanner.nextInt();
+            cords[0] = x;
+            cords[1] = y;
             scanner.nextLine();
-            if (x < 0 || x > 2 || y < 0 || y > 2) {
-                System.out.println("Stick within the board.");
+            if(!moveValid(board, cords)) {
+                System.out.print("Input move again: ");
                 continue;
             }
-            if (board[x][y] != '\0') {
-                System.out.println("Place is occupied.");
-                continue;
-            }
-            board[x][y] = player;
             break;
         }
+        return cords;
+    }
+
+    public static boolean moveValid(char[][] board, int[] cords) {
+        int x = cords[0];
+        int y = cords[1];
+
+        if (x < 0 || x > 2 || y < 0 || y > 2) {
+            System.out.println("Stick within the board.");
+            return false;
+        }
+        if (board[x][y] != '\0') {
+            System.out.println("Place is occupied.");
+            return false;
+        }
+        return true;
+    }
+
+    public static char[][] makeMove(char[][] board, char player, int[] cords) {
+        char[][] updatedBoard = new char[3][3];
+        for(int i = 0; i < board.length; i++) {
+            for(int y = 0; y < board[i].length; y++) {
+                if(i == cords[0] && y == cords[1]) {
+                    updatedBoard[i][y] = player;
+                    continue;
+                }
+                updatedBoard[i][y] = board[i][y];
+            }
+        }
+        return updatedBoard;
     }
 
     public static void render(char[][] board) {
@@ -62,7 +91,7 @@ public class TicTacToe {
     }
 
     public static char winner(char[][] board, int moves) {
-        if(moves < 5) {
+        if (moves < 5) {
             return '\0';
         }
         char horizontalWinner = horizontalWinner(board);

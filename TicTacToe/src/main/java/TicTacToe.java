@@ -11,7 +11,11 @@ public class TicTacToe {
         int moves = 0;
         while (moves != 9 && winner(board, moves) == '\0') {
             System.out.print(player + "'s move: ");
-            int[] cords = getMove(board, player);
+            int[] cords = getMove();
+            while(!moveValid(board, cords)) {
+                System.out.print("Input again: ");
+                cords = getMove();
+            }
             board = makeMove(board, player, cords);
             moves++;
             render(board);
@@ -25,7 +29,7 @@ public class TicTacToe {
         }
     }
 
-    public static int[] getMove(char[][] board, char player) {
+    public static int[] getMove() {
         Scanner scanner = new Scanner(System.in);
         int[] cords = new int[2];
         while (true) {
@@ -34,10 +38,6 @@ public class TicTacToe {
             cords[0] = x;
             cords[1] = y;
             scanner.nextLine();
-            if(!moveValid(board, cords)) {
-                System.out.print("Input move again: ");
-                continue;
-            }
             break;
         }
         return cords;

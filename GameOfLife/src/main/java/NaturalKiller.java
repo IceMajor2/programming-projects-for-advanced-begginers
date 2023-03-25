@@ -9,68 +9,75 @@ public class NaturalKiller extends Cell {
 
     public NaturalKiller(int x, int y, int status) {
         super(x, y, status);
-        this.killingPower = 0.03;
+        this.killingPower = 0.3;
         this.board = GameOfLife.board;
-        this.neighbors = board.directNeighbors(this);
+        this.neighbors = this.board.directNeighbors(this);
     }
 
     public NaturalKiller(Cell cell) {
         super(cell);
+        this.killingPower = 0.3;
+        this.board = GameOfLife.board;
+        this.neighbors = this.board.directNeighbors(this);
     }
 
-    public void act() {
+    public NaturalKiller act() {
         if (isFriendlyCellNeighbor()) {
-            attack();
-            return;
+            return attack();
         }
-        move();
+        return move();
     }
 
-    public void attack() {
+    private NaturalKiller attack() {
         Random random = new Random();
         int cellIndex = random.nextInt(neighbors.length);
         Cell attacked = neighbors[cellIndex];
-        if (random.nextDouble() <= 0.03) {
+        if (random.nextDouble() <= this.killingPower) {
             attacked.setStatus(-1);
         }
+        return this;
     }
 
-    public void move() {
+    private NaturalKiller move() {
         Cell[] slots = this.freeCells();
         Random random = new Random();
         Cell moveTo = slots[random.nextInt(slots.length)];
-        int x = moveTo.x;
-        int y = moveTo.y;
-        board.put(this, x, y);
+        this.x = moveTo.x;
+        this.y = moveTo.y;
+        return this;
     }
 
     private Cell[] freeCells() {
         int counter = 0;
         Cell[] freeCells = new Cell[4];
         try {
-            if(board.get(x + 1, y).getStatus() == -1) {
+            if (board.get(x + 1, y).getStatus() == -1) {
                 freeCells[counter] = board.get(x + 1, y);
                 counter++;
             }
-        } catch(ArrayIndexOutOfBoundsException e) {}
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
         try {
-            if(board.get(x - 1, y).getStatus() == -1) {
+            if (board.get(x - 1, y).getStatus() == -1) {
                 freeCells[counter] = board.get(x - 1, y);
                 counter++;
             }
-        } catch(ArrayIndexOutOfBoundsException e) {}
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
         try {
-            if(board.get(x, y + 1).getStatus() == -1) {
+            if (board.get(x, y + 1).getStatus() == -1) {
                 freeCells[counter] = board.get(x, y + 1);
                 counter++;
             }
-        } catch(ArrayIndexOutOfBoundsException e) {}
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
         try {
-            if(board.get(x, y - 1).getStatus() == -1) {
+            if (board.get(x, y - 1).getStatus() == -1) {
                 freeCells[counter] = board.get(x, y - 1);
                 counter++;
             }
-        } catch(ArrayIndexOutOfBoundsException e) {}
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
         Cell[] newCells = new Cell[freeCells.length];
         System.arraycopy(freeCells, 0, newCells, 0, counter);
         return newCells;
@@ -83,5 +90,12 @@ public class NaturalKiller extends Cell {
             }
         }
         return false;
+    }
+
+    public String toString() {
+        if (this.status == 1) {
+            return "!";
+        }
+        return " ";
     }
 }

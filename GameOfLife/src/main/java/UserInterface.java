@@ -11,18 +11,21 @@ public class UserInterface {
     public UserInterface() {
         this.scanner = new Scanner(System.in);
         this.logic = new ProgramLogic();
-        this.board = GameOfLife.board;
     }
 
-    public void run() throws IOException {
+    public void run() {
         System.out.print("Open LIFE from file? (hit ENTER for random) ");
         String file = scanner.nextLine();
+        if(file.equals("t")) {
+            logic.runTest();
+        }
         if (file.isEmpty()) {
             System.out.println("Dimensions of the board? (ex: 64 32) ");
             String dimensions = scanner.nextLine();
             int height = Integer.valueOf(dimensions.split(" ")[0]);
             int width = Integer.valueOf(dimensions.split(" ")[1]);
-            board = new LifeBoard(height, width);
+            GameOfLife.board = new LifeBoard(height, width);
+            this.board = GameOfLife.board;
         } else {
             try {
                 board = new LifeBoard(logic.loadStateFromTXT(file));
@@ -40,5 +43,6 @@ public class UserInterface {
             board.setRevivalChance(Double.valueOf(revivalInput));
         }
         logic.runForever(board, delay);
+        
     }
 }

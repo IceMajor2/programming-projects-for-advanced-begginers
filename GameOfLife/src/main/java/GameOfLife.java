@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 /*
 TODO:
 - enable user to determine the game of life's rules
@@ -10,14 +8,10 @@ TODO:
 
 public class GameOfLife {
 
-    public static LifeBoard board = null;
+    public static LifeBoard board;
     
     public static void main(String[] args) {
         UserInterface UI = new UserInterface();
-        try {
-           UI.run(); 
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+        UI.run();
     }
 }

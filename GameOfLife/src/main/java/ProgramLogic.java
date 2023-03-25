@@ -48,7 +48,7 @@ public class ProgramLogic {
     }
 
     public void runForever(LifeBoard board, long delay) {
-        if(board == null) {
+        if (board == null) {
             throw new NullPointerException();
         }
         while (true) {
@@ -64,5 +64,20 @@ public class ProgramLogic {
 
     public void runForever(LifeBoard board) {
         runForever(board, 1000);
+    }
+
+    public void runTest() {
+        GameOfLife.board = new LifeBoard(12, 10);
+        Cell NK = new NaturalKiller(0, 0, 1);
+        GameOfLife.board.put(NK, 0, 0);
+        while (true) {
+            render(GameOfLife.board);
+            GameOfLife.board.nextBoardState();
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+        }
     }
 }

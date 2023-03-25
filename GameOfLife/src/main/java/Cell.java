@@ -1,7 +1,7 @@
 
 public class Cell {
     
-    private int status;
+    protected int status;
     protected int x;
     protected int y;
     

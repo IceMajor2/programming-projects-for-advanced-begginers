@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class LifeBoard {
@@ -31,40 +32,54 @@ public class LifeBoard {
                     if (neighbor.getStatus() != 1) {
                         continue;
                     }
-                    if (neighbor instanceof NaturalKiller) {
-                        if (!isDirectlyNextTo(cell, neighbor)) {
-                            continue;
-                        }
+                    if (!(cell instanceof NaturalKiller)
+                            && neighbor instanceof NaturalKiller) {
+                        continue;
                     }
                     neighbors[aliveNeighbors] = neighbor;
-                    aliveNeighbors++; 
+                    aliveNeighbors++;
                 } catch (ArrayIndexOutOfBoundsException e) {
                     continue;
                 }
             }
         }
-        if(neighbors[0] == null) {
-            return new Cell[] {};
+        if (neighbors[0] == null) {
+            if (cell instanceof NaturalKiller) {
+                System.out.println("I was there");
+            }
+
+            return new Cell[]{};
         }
         Cell[] noNulls = new Cell[aliveNeighbors];
         System.arraycopy(neighbors, 0, noNulls, 0, aliveNeighbors);
+        if (cell instanceof NaturalKiller) {
+            for (Cell n : neighbors) {
+                if (n == null) {
+                    continue;
+                }
+                System.out.print(n + " ");
+            }
+            System.out.println("");
+        }
         return noNulls;
     }
-    
+
     public Cell[] directNeighbors(Cell cell) {
         int counter = 0;
         Cell[] totalNeighbors = this.aliveNeighbors(cell);
         Cell[] onlyFriends = new Cell[totalNeighbors.length];
-        for(Cell c : totalNeighbors) {
-            onlyFriends[counter] = c;
-            counter++;
+        for (Cell c : totalNeighbors) {
+            if (isDirectlyNextTo(cell, c)) {
+                onlyFriends[counter] = c;
+                counter++;
+            }
         }
-        if(onlyFriends[0] == null) {
-            return new Cell[] {};
+        if (onlyFriends.length == 0 || onlyFriends[0] == null) {
+            return new Cell[]{};
         }
         Cell[] onlyNotNullFriends = new Cell[counter];
         System.arraycopy(onlyFriends, 0, onlyNotNullFriends, 0, counter);
-        return onlyFriends;
+        return onlyNotNullFriends;
     }
 
     private boolean isDirectlyNextTo(Cell c1, Cell c2) {
@@ -106,9 +121,23 @@ public class LifeBoard {
     }
 
     public Cell[][] nextBoardState() {
+        ArrayList<Cell> alreadyMoved = new ArrayList<>();
         Cell[][] nextBoard = new Cell[board.length][board[0].length];
+
         for (int i = 0; i < board.length; i++) {
             for (int y = 0; y < board[i].length; y++) {
+                Cell NK = board[i][y];
+                if (NK instanceof NaturalKiller && !alreadyMoved.contains(NK)) {
+                    Cell copy = new NaturalKiller(((NaturalKiller) NK).act());
+                    if (NK.getX() == copy.getX() && NK.getY() == copy.getY()) {
+                        nextBoard[i][y] = copy;
+                        continue;
+                    }
+                    nextBoard[i][y] = new Cell(i, y, -1);
+                    nextBoard[copy.getX()][copy.getY()] = copy;
+                    alreadyMoved.add(copy);
+                    continue;
+                }
                 Cell cell = new Cell(board[i][y]);
                 int aliveNeighbors = aliveNeighbors(cell).length;
                 if (cell.getStatus() == 1) {
@@ -142,11 +171,7 @@ public class LifeBoard {
             cell.setStatus(1);
         }
     }
-    
-    public void delete(int x, int y) {
-        board[x][y].setStatus(-1);
-    }
-    
+
     public void put(Cell cell, int x, int y) {
         board[x][y] = cell;
     }

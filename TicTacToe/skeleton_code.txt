@@ -1,0 +1,38 @@
+board = newBoard(); // always a 3x3 board
+
+while(noWinner) {
+
+	render(board);
+	
+	currentPlayer = 'X'; // assuming X always makes 1st move
+	
+	makeMove(currentPlayer);
+
+	if(moves >= 5) {	/* it's impossible to win a
+		checkWinner();  /  Tic-Tac-Toe game with
+	}					*/ fewer than 5 moves
+	
+	if(moves == 9) {
+		print("DRAW");
+		return;
+	}
+	
+	currentPlayer = 'O' | 'X' // depending on who made last move
+	
+}
+
+print(winner);
+
+-----
+
+makeMove(currentPlayer) {
+	while(true) {
+	
+		place = readInput();
+		
+		if(place == empty) {
+			place = currentPlayer;
+			break;
+		}
+		
+}

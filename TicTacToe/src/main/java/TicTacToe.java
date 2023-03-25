@@ -3,39 +3,46 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class TicTacToe {
-
+    
     public static void main(String[] args) {
         char[][] board = new char[3][3];
         char player = readPlayer();
+        char playerAI = player == 'X' ? 'O' : 'X';
         render(board);
-        
-        int moves = 0;
-        while (moves != 9 && winner(board, moves) == '\0') {
-            System.out.print(player + "'s move: ");
-            int[] cords = getMove();
-            while(!moveValid(board, cords)) {
-                System.out.print("Input again: ");
-                cords = getMove();
+        System.out.println("You play as: " + player);
+        System.out.println("Computer is: " + playerAI);
+
+        char currPlayer = player == 'X' ? player : playerAI;
+        while (winner(board) == '\0') {
+            if(currPlayer == player) {
+                System.out.print("Your move: ");
             }
-            board = makeMove(board, player, cords);
-            moves++;
+            if (currPlayer == player) {
+                board = makeMove(board, player);
+            } else if (currPlayer == playerAI) {
+                board = makeMoveAI(board, playerAI);
+            }
             render(board);
-            player = (player == 'X') ? 'O' : 'X';
+            currPlayer = currPlayer == player ? playerAI : player;
         }
-        char winner = winner(board, moves);
+        char winner = winner(board);
         if (winner == '\0') {
             System.out.println("DRAW");
         } else {
             System.out.println(winner + " WINS");
         }
     }
-    
+
     public static char readPlayer() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Play as [def: X]: ");
         char input = scanner.next().charAt(0);
-        char player = input == '\0' ? 'X' : input;
-        return player;
+        switch(input) {
+            case 'O':
+                return 'O';
+            default:
+                return 'X';
+        }
     }
 
     public static int[] getMove() {
@@ -49,6 +56,13 @@ public class TicTacToe {
             scanner.nextLine();
             break;
         }
+        return cords;
+    }
+    
+    public static int[] getMoveAI(char[][] board) {
+        int[][] emptySlots = getEmptySlots(board);
+        Random random = new Random();
+        int[] cords = emptySlots[random.nextInt(emptySlots.length)];
         return cords;
     }
 
@@ -67,11 +81,16 @@ public class TicTacToe {
         return true;
     }
 
-    public static char[][] makeMove(char[][] board, char player, int[] cords) {
+    public static char[][] makeMove(char[][] board, char player) {
+        int[] cords = getMove();
+        while (!moveValid(board, cords)) {
+            System.out.print("Input again: ");
+            cords = getMove();
+        }
         char[][] updatedBoard = new char[3][3];
-        for(int i = 0; i < board.length; i++) {
-            for(int y = 0; y < board[i].length; y++) {
-                if(i == cords[0] && y == cords[1]) {
+        for (int i = 0; i < board.length; i++) {
+            for (int y = 0; y < board[i].length; y++) {
+                if (i == cords[0] && y == cords[1]) {
                     updatedBoard[i][y] = player;
                     continue;
                 }
@@ -80,7 +99,51 @@ public class TicTacToe {
         }
         return updatedBoard;
     }
-
+    
+    public static char[][] makeMoveAI(char[][] board, char playerAI) {
+        int[] cords = getMoveAI(board);
+        char[][] updatedBoard = new char[3][3];
+        
+        for(int i = 0; i < board.length; i++) {
+            for(int y = 0; y < board[i].length; y++) {
+                if(i == cords[0] && y == cords[1]) {
+                    updatedBoard[i][y] = playerAI;
+                    continue;
+                }
+                updatedBoard[i][y] = board[i][y];
+            }
+        }
+        return updatedBoard;
+    }
+    
+    public static int[][] getEmptySlots(char[][] board) {
+        int[][] emptySlots = new int[emptySlotsCount(board)][2];
+        int pointer = 0;
+        for(int i = 0; i < board.length; i++) {
+            for(int y = 0; y < board[i].length; y++) {
+                char slot = board[i][y];
+                if(slot == '\0') {
+                    emptySlots[pointer][0] = i;
+                    emptySlots[pointer][1] = y;
+                    pointer++;
+                }
+            }
+        }
+        return emptySlots;
+    }
+    
+    public static int emptySlotsCount(char[][] board) {
+        int count = 0;
+        for(char[] row : board) {
+            for(char spot : row) {
+                if(spot == '\0') {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
     public static void render(char[][] board) {
         System.out.println("   0  1  2");
         System.out.println("   - - - -");
@@ -99,8 +162,8 @@ public class TicTacToe {
         System.out.println("   - - - -");
     }
 
-    public static char winner(char[][] board, int moves) {
-        if (moves < 5) {
+    public static char winner(char[][] board) {
+        if (emptySlotsCount(board) > 4) {
             return '\0';
         }
         char horizontalWinner = horizontalWinner(board);

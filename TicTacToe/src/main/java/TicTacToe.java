@@ -9,13 +9,13 @@ public class TicTacToe {
 
         char player = 'X';
         int moves = 0;
-        while (moves != 9 && moves < 5 || winner(board) == '\0') { // double OR condition is there so the winner is not checked unneccessarily when there fewer than 5 moves
+        while (moves != 9 && winner(board, moves) == '\0') {
             makeMove(board, player);
             moves++;
             render(board);
             player = (player == 'X') ? 'O' : 'X';
         }
-        char winner = winner(board);
+        char winner = winner(board, moves);
         if (winner == '\0') {
             System.out.println("DRAW");
         } else {
@@ -26,7 +26,7 @@ public class TicTacToe {
     public static void makeMove(char[][] board, char player) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.print("Your move (ex: 1 2): ");
+            System.out.print(player + "'s move: ");
             int x = scanner.nextInt();
             int y = scanner.nextInt();
             scanner.nextLine();
@@ -44,22 +44,27 @@ public class TicTacToe {
     }
 
     public static void render(char[][] board) {
-        System.out.println("---------");
-        for (char[] row : board) {
-            System.out.print("| ");
-            for (char place : row) {
-                if (place == '\0') {
+        System.out.println("   0  1  2");
+        System.out.println("   - - - -");
+
+        for (int i = 0; i < board.length; i++) {
+            System.out.print(i + " | ");
+            for (int y = 0; y < board[i].length; y++) {
+                if (board[i][y] == '\0') {
                     System.out.print("  ");
                     continue;
                 }
-                System.out.print(place + " ");
+                System.out.print(board[i][y] + " ");
             }
             System.out.println("|");
         }
-        System.out.println("---------");
+        System.out.println("   - - - -");
     }
 
-    public static char winner(char[][] board) {
+    public static char winner(char[][] board, int moves) {
+        if(moves < 5) {
+            return '\0';
+        }
         char horizontalWinner = horizontalWinner(board);
         if (horizontalWinner != '\0') {
             return horizontalWinner;

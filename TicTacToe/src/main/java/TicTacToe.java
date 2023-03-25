@@ -1,13 +1,14 @@
 
 import java.util.Scanner;
+import java.util.Random;
 
 public class TicTacToe {
 
     public static void main(String[] args) {
         char[][] board = new char[3][3];
+        char player = readPlayer();
         render(board);
-
-        char player = 'X';
+        
         int moves = 0;
         while (moves != 9 && winner(board, moves) == '\0') {
             System.out.print(player + "'s move: ");
@@ -27,6 +28,14 @@ public class TicTacToe {
         } else {
             System.out.println(winner + " WINS");
         }
+    }
+    
+    public static char readPlayer() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Play as [def: X]: ");
+        char input = scanner.next().charAt(0);
+        char player = input == '\0' ? 'X' : input;
+        return player;
     }
 
     public static int[] getMove() {

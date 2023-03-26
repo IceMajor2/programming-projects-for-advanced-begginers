@@ -14,13 +14,16 @@ public class TicTacToe {
 
         char currPlayer = player == 'X' ? player : playerAI;
         while (winner(board) == '\0') {
-            if(currPlayer == player) {
-                System.out.print("Your move: ");
-            }
             if (currPlayer == player) {
-                board = makeMove(board, player);
+                System.out.print("Your move: ");
+                int[] cords = getMove();
+                while(!moveValid(board, cords)) {
+                    cords = getMove();
+                }
+                board = makeMove(board, cords, currPlayer);
             } else if (currPlayer == playerAI) {
-                board = makeMoveAI(board, playerAI);
+                int[] cords = randomAI(board, currPlayer);
+                board = makeMove(board, cords, currPlayer);
             }
             render(board);
             currPlayer = currPlayer == player ? playerAI : player;
@@ -44,25 +47,22 @@ public class TicTacToe {
                 return 'X';
         }
     }
+    
+    public static int[] randomAI(char[][] board, char player) {
+        int[][] emptySlots = getEmptySlots(board);
+        Random random = new Random();
+        int[] cords = emptySlots[random.nextInt(emptySlots.length)];
+        return cords;
+    }
 
     public static int[] getMove() {
         Scanner scanner = new Scanner(System.in);
         int[] cords = new int[2];
-        while (true) {
             int x = scanner.nextInt();
             int y = scanner.nextInt();
             cords[0] = x;
             cords[1] = y;
             scanner.nextLine();
-            break;
-        }
-        return cords;
-    }
-    
-    public static int[] getMoveAI(char[][] board) {
-        int[][] emptySlots = getEmptySlots(board);
-        Random random = new Random();
-        int[] cords = emptySlots[random.nextInt(emptySlots.length)];
         return cords;
     }
 
@@ -81,33 +81,12 @@ public class TicTacToe {
         return true;
     }
 
-    public static char[][] makeMove(char[][] board, char player) {
-        int[] cords = getMove();
-        while (!moveValid(board, cords)) {
-            System.out.print("Input again: ");
-            cords = getMove();
-        }
+    public static char[][] makeMove(char[][] board, int[] cords, char player) {
         char[][] updatedBoard = new char[3][3];
         for (int i = 0; i < board.length; i++) {
             for (int y = 0; y < board[i].length; y++) {
                 if (i == cords[0] && y == cords[1]) {
                     updatedBoard[i][y] = player;
-                    continue;
-                }
-                updatedBoard[i][y] = board[i][y];
-            }
-        }
-        return updatedBoard;
-    }
-    
-    public static char[][] makeMoveAI(char[][] board, char playerAI) {
-        int[] cords = getMoveAI(board);
-        char[][] updatedBoard = new char[3][3];
-        
-        for(int i = 0; i < board.length; i++) {
-            for(int y = 0; y < board[i].length; y++) {
-                if(i == cords[0] && y == cords[1]) {
-                    updatedBoard[i][y] = playerAI;
                     continue;
                 }
                 updatedBoard[i][y] = board[i][y];

@@ -14,12 +14,13 @@ public class TicTacToe {
         while (winner(board) == '\0' && emptySlotsCount(board) != 0) {
             try {
                 Thread.sleep(2000);
-            } catch(InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
             if (currPlayer == player01) {
-                int[] cords = leastIntelligentAI(board, currPlayer);
+                int[] cords = quiteIntelligentAI(board, currPlayer);
                 board = makeMove(board, cords, currPlayer);
             } else if (currPlayer == player02) {
-                int[] cords = quiteIntelligentAI(board, currPlayer);
+                int[] cords = humanPlayer(board, currPlayer);
                 board = makeMove(board, cords, currPlayer);
             }
             render(board);
@@ -33,53 +34,14 @@ public class TicTacToe {
         }
     }
 
-    public static char readPlayer() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Play as [def: X]: ");
-        char input = scanner.next().charAt(0);
-        switch (input) {
-            case 'O':
-                return 'O';
-            default:
-                return 'X';
+    public static int[] humanPlayer(char[][] board, char player) {
+        System.out.print("Give your move [" + player + "]: ");
+        int[] cords = getMove();
+        while(!moveValid(board, cords)) {
+            System.out.print("Try again: ");
+            cords = getMove();
         }
-    }
-
-    public static int[] leastIntelligentAI(char[][] board, char player) {
-        int[] winningMove = winningMove(board, player);
-        if(winningMove != null) {
-            return winningMove;
-        }
-        return randomAI(board, player);
-    }
-    
-    public static int[] quiteIntelligentAI(char[][] board, char player) {
-        int[] winningMove = winningMove(board, player);
-        if(winningMove != null) {
-            return winningMove;
-        }
-        char opponent = player == 'X' ? 'O' : 'X';
-        int[] losingMove = winningMove(board, opponent);
-        if(losingMove != null) {
-            return losingMove;
-        }
-        return randomAI(board, player);
-    }
-    
-    public static int[] winningMove(char[][] board, char player) {
-        int[] closeHorizontal = closeHorizontalWinner(board, player);
-        if (closeHorizontal != null) {
-            return closeHorizontal;
-        }
-        int[] closeVertical = closeVerticalWinner(board, player);
-        if (closeVertical != null) {
-            return closeVertical;
-        }
-        int[] closeDiagonal = closeDiagonalWinner(board, player);
-        if(closeDiagonal != null) {
-            return closeDiagonal;
-        }
-        return null;
+        return cords;
     }
 
     public static int[] randomAI(char[][] board, char player) {
@@ -88,15 +50,51 @@ public class TicTacToe {
         int[] cords = emptySlots[random.nextInt(emptySlots.length)];
         return cords;
     }
+    
+    public static int[] leastIntelligentAI(char[][] board, char player) {
+        int[] winningMove = winningMove(board, player);
+        if (winningMove != null) {
+            return winningMove;
+        }
+        return randomAI(board, player);
+    }
+
+    public static int[] quiteIntelligentAI(char[][] board, char player) {
+        int[] winningMove = winningMove(board, player);
+        if (winningMove != null) {
+            return winningMove;
+        }
+        char opponent = player == 'X' ? 'O' : 'X';
+        int[] losingMove = winningMove(board, opponent);
+        if (losingMove != null) {
+            return losingMove;
+        }
+        return randomAI(board, player);
+    }
+    
+    public static int[] winningMove(char[][] board, char player) {
+        int[] closeHorizontal = winningHorizontalMove(board, player);
+        if (closeHorizontal != null) {
+            return closeHorizontal;
+        }
+        int[] closeVertical = winningVerticalMove(board, player);
+        if (closeVertical != null) {
+            return closeVertical;
+        }
+        int[] closeDiagonal = winningDiagonalMove(board, player);
+        if (closeDiagonal != null) {
+            return closeDiagonal;
+        }
+        return null;
+    }
 
     public static int[] getMove() {
         Scanner scanner = new Scanner(System.in);
         int[] cords = new int[2];
         int x = scanner.nextInt();
         int y = scanner.nextInt();
-        cords[0] = x;
-        cords[1] = y;
-        scanner.nextLine();
+        cords[0] = y;
+        cords[1] = x;
         return cords;
     }
 
@@ -127,34 +125,6 @@ public class TicTacToe {
             }
         }
         return updatedBoard;
-    }
-
-    public static int[][] getEmptySlots(char[][] board) {
-        int[][] emptySlots = new int[emptySlotsCount(board)][2];
-        int pointer = 0;
-        for (int i = 0; i < board.length; i++) {
-            for (int y = 0; y < board[i].length; y++) {
-                char slot = board[i][y];
-                if (slot == '\0') {
-                    emptySlots[pointer][0] = i;
-                    emptySlots[pointer][1] = y;
-                    pointer++;
-                }
-            }
-        }
-        return emptySlots;
-    }
-
-    public static int emptySlotsCount(char[][] board) {
-        int count = 0;
-        for (char[] row : board) {
-            for (char spot : row) {
-                if (spot == '\0') {
-                    count++;
-                }
-            }
-        }
-        return count;
     }
 
     public static void render(char[][] board) {
@@ -224,7 +194,7 @@ public class TicTacToe {
         return '\0';
     }
 
-    public static int[] closeHorizontalWinner(char[][] board, char player) {
+    public static int[] winningHorizontalMove(char[][] board, char player) {
         for (int i = 0; i < board.length; i++) {
             int amountOfSame = 0;
             int empty = 0;
@@ -249,7 +219,7 @@ public class TicTacToe {
         return null;
     }
 
-    public static int[] closeVerticalWinner(char[][] board, char player) {
+    public static int[] winningVerticalMove(char[][] board, char player) {
         for (int i = 0; i < board.length; i++) {
             int amountOfSame = 0;
             int empty = 0;
@@ -274,7 +244,7 @@ public class TicTacToe {
         return null;
     }
 
-    public static int[] closeDiagonalWinner(char[][] board, char player) {
+    public static int[] winningDiagonalMove(char[][] board, char player) {
         int empty = 0;
         int amountOfSame = 0;
         int[] emptyCords = null;
@@ -284,13 +254,14 @@ public class TicTacToe {
                 empty++;
                 continue;
             }
-            if(empty == 2) {
+            if (empty == 2) {
                 break;
             }
-            if(board[i][y] == player) {
+            if (board[i][y] == player) {
                 amountOfSame++;
             }
-        } if (amountOfSame + empty == 3 && empty == 1) {
+        }
+        if (amountOfSame + empty == 3 && empty == 1) {
             return emptyCords;
         }
         empty = 0;
@@ -302,15 +273,44 @@ public class TicTacToe {
                 empty++;
                 continue;
             }
-            if(empty == 2) {
+            if (empty == 2) {
                 break;
             }
-            if(board[i][y] == player) {
+            if (board[i][y] == player) {
                 amountOfSame++;
             }
-        } if (amountOfSame + empty == 3 && empty == 1) {
+        }
+        if (amountOfSame + empty == 3 && empty == 1) {
             return emptyCords;
         }
         return null;
+    }
+
+    public static int[][] getEmptySlots(char[][] board) {
+        int[][] emptySlots = new int[emptySlotsCount(board)][2];
+        int pointer = 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int y = 0; y < board[i].length; y++) {
+                char slot = board[i][y];
+                if (slot == '\0') {
+                    emptySlots[pointer][0] = i;
+                    emptySlots[pointer][1] = y;
+                    pointer++;
+                }
+            }
+        }
+        return emptySlots;
+    }
+
+    public static int emptySlotsCount(char[][] board) {
+        int count = 0;
+        for (char[] row : board) {
+            for (char spot : row) {
+                if (spot == '\0') {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }

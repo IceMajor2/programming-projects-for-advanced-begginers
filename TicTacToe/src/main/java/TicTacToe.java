@@ -6,27 +6,32 @@ public class TicTacToe {
     
     public static void main(String[] args) {
         char[][] board = new char[3][3];
-        char player = readPlayer();
+        char player = 'X';
         char playerAI = player == 'X' ? 'O' : 'X';
         render(board);
-        System.out.println("You play as: " + player);
-        System.out.println("Computer is: " + playerAI);
+        //System.out.println("You play as: " + player);
+        //System.out.println("Computer is: " + playerAI);
 
         char currPlayer = player == 'X' ? player : playerAI;
         while (winner(board) == '\0') {
             if (currPlayer == player) {
-                System.out.print("Your move: ");
+                int[] cords = randomAI(board, currPlayer);
+                board = makeMove(board, cords, currPlayer);
+                /*System.out.print("Your move: ");
                 int[] cords = getMove();
                 while(!moveValid(board, cords)) {
                     cords = getMove();
                 }
-                board = makeMove(board, cords, currPlayer);
+                board = makeMove(board, cords, currPlayer);*/
             } else if (currPlayer == playerAI) {
                 int[] cords = randomAI(board, currPlayer);
                 board = makeMove(board, cords, currPlayer);
             }
             render(board);
             currPlayer = currPlayer == player ? playerAI : player;
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {}
         }
         char winner = winner(board);
         if (winner == '\0') {

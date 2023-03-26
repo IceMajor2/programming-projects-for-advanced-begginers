@@ -6,33 +6,24 @@ public class TicTacToe {
 
     public static void main(String[] args) {
         char[][] board = new char[3][3];
-        char player = 'X';
-        char playerAI = player == 'X' ? 'O' : 'X';
+        char player01 = 'X';
+        char player02 = 'O';
         render(board);
-        //System.out.println("You play as: " + player);
-        //System.out.println("Computer is: " + playerAI);
 
-        char currPlayer = player == 'X' ? player : playerAI;
+        char currPlayer = 'X';
         while (winner(board) == '\0' && emptySlotsCount(board) != 0) {
-            if (currPlayer == player) {
-                int[] cords = randomAI(board, currPlayer);
-                board = makeMove(board, cords, currPlayer);
-                /*System.out.print("Your move: ");
-                int[] cords = getMove();
-                while(!moveValid(board, cords)) {
-                    cords = getMove();
-                }
-                board = makeMove(board, cords, currPlayer);*/
-            } else if (currPlayer == playerAI) {
+            try {
+                Thread.sleep(2000);
+            } catch(InterruptedException e) {}
+            if (currPlayer == player01) {
                 int[] cords = leastIntelligentAI(board, currPlayer);
+                board = makeMove(board, cords, currPlayer);
+            } else if (currPlayer == player02) {
+                int[] cords = quiteIntelligentAI(board, currPlayer);
                 board = makeMove(board, cords, currPlayer);
             }
             render(board);
-            currPlayer = currPlayer == player ? playerAI : player;
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-            }
+            currPlayer = currPlayer == player01 ? player02 : player01;
         }
         char winner = winner(board);
         if (winner == '\0') {
@@ -55,6 +46,27 @@ public class TicTacToe {
     }
 
     public static int[] leastIntelligentAI(char[][] board, char player) {
+        int[] winningMove = winningMove(board, player);
+        if(winningMove != null) {
+            return winningMove;
+        }
+        return randomAI(board, player);
+    }
+    
+    public static int[] quiteIntelligentAI(char[][] board, char player) {
+        int[] winningMove = winningMove(board, player);
+        if(winningMove != null) {
+            return winningMove;
+        }
+        char opponent = player == 'X' ? 'O' : 'X';
+        int[] losingMove = winningMove(board, opponent);
+        if(losingMove != null) {
+            return losingMove;
+        }
+        return randomAI(board, player);
+    }
+    
+    public static int[] winningMove(char[][] board, char player) {
         int[] closeHorizontal = closeHorizontalWinner(board, player);
         if (closeHorizontal != null) {
             return closeHorizontal;
@@ -67,8 +79,7 @@ public class TicTacToe {
         if(closeDiagonal != null) {
             return closeDiagonal;
         }
-        
-        return randomAI(board, player);
+        return null;
     }
 
     public static int[] randomAI(char[][] board, char player) {

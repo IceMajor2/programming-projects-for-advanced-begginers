@@ -3,7 +3,7 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class TicTacToe {
-    
+
     public static void main(String[] args) {
         char[][] board = new char[3][3];
         char player = 'X';
@@ -24,14 +24,15 @@ public class TicTacToe {
                 }
                 board = makeMove(board, cords, currPlayer);*/
             } else if (currPlayer == playerAI) {
-                int[] cords = randomAI(board, currPlayer);
+                int[] cords = leastIntelligentAI(board, currPlayer);
                 board = makeMove(board, cords, currPlayer);
             }
             render(board);
             currPlayer = currPlayer == player ? playerAI : player;
             try {
                 Thread.sleep(2000);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
         }
         char winner = winner(board);
         if (winner == '\0') {
@@ -45,14 +46,30 @@ public class TicTacToe {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Play as [def: X]: ");
         char input = scanner.next().charAt(0);
-        switch(input) {
+        switch (input) {
             case 'O':
                 return 'O';
             default:
                 return 'X';
         }
     }
-    
+
+    public static int[] leastIntelligentAI(char[][] board, char player) {
+        int[] closeHorizontal = closeHorizontalWinner(board, player);
+        if (closeHorizontal != null) {
+            return closeHorizontal;
+        }
+        int[] closeVertical = closeVerticalWinner(board, player);
+        if (closeVertical != null) {
+            return closeVertical;
+        }
+        int[] closeDiagonal = closeDiagonalWinner(board, player);
+        if(closeDiagonal != null) {
+            return closeDiagonal;
+        }
+        return randomAI(board, player);
+    }
+
     public static int[] randomAI(char[][] board, char player) {
         int[][] emptySlots = getEmptySlots(board);
         Random random = new Random();
@@ -63,11 +80,11 @@ public class TicTacToe {
     public static int[] getMove() {
         Scanner scanner = new Scanner(System.in);
         int[] cords = new int[2];
-            int x = scanner.nextInt();
-            int y = scanner.nextInt();
-            cords[0] = x;
-            cords[1] = y;
-            scanner.nextLine();
+        int x = scanner.nextInt();
+        int y = scanner.nextInt();
+        cords[0] = x;
+        cords[1] = y;
+        scanner.nextLine();
         return cords;
     }
 
@@ -99,14 +116,14 @@ public class TicTacToe {
         }
         return updatedBoard;
     }
-    
+
     public static int[][] getEmptySlots(char[][] board) {
         int[][] emptySlots = new int[emptySlotsCount(board)][2];
         int pointer = 0;
-        for(int i = 0; i < board.length; i++) {
-            for(int y = 0; y < board[i].length; y++) {
+        for (int i = 0; i < board.length; i++) {
+            for (int y = 0; y < board[i].length; y++) {
                 char slot = board[i][y];
-                if(slot == '\0') {
+                if (slot == '\0') {
                     emptySlots[pointer][0] = i;
                     emptySlots[pointer][1] = y;
                     pointer++;
@@ -115,19 +132,19 @@ public class TicTacToe {
         }
         return emptySlots;
     }
-    
+
     public static int emptySlotsCount(char[][] board) {
         int count = 0;
-        for(char[] row : board) {
-            for(char spot : row) {
-                if(spot == '\0') {
+        for (char[] row : board) {
+            for (char spot : row) {
+                if (spot == '\0') {
                     count++;
                 }
             }
         }
         return count;
     }
-    
+
     public static void render(char[][] board) {
         System.out.println("   0  1  2");
         System.out.println("   - - - -");
@@ -193,5 +210,95 @@ public class TicTacToe {
             return board[0][2];
         }
         return '\0';
+    }
+
+    public static int[] closeHorizontalWinner(char[][] board, char player) {
+        for (int i = 0; i < board.length; i++) {
+            int amountOfSame = 0;
+            int empty = 0;
+            int[] emptyCords = null;
+            for (int y = 0; y < board.length; y++) {
+                if (board[i][y] == '\0') {
+                    emptyCords = new int[]{i, y};
+                    empty++;
+                    continue;
+                }
+                if (empty == 2) {
+                    break;
+                }
+                if (board[i][y] == player) {
+                    amountOfSame++;
+                }
+            }
+            if (amountOfSame + empty == 3 && empty == 1) {
+                return emptyCords;
+            }
+        }
+        return null;
+    }
+
+    public static int[] closeVerticalWinner(char[][] board, char player) {
+        for (int i = 0; i < board.length; i++) {
+            int amountOfSame = 0;
+            int empty = 0;
+            int[] emptyCords = null;
+            for (int y = 0; y < board.length; y++) {
+                if (board[y][i] == '\0') {
+                    emptyCords = new int[]{y, i};
+                    empty++;
+                    continue;
+                }
+                if (empty == 2) {
+                    break;
+                }
+                if (board[y][i] == player) {
+                    amountOfSame++;
+                }
+            }
+            if (amountOfSame + empty == 3 && empty == 1) {
+                return emptyCords;
+            }
+        }
+        return null;
+    }
+
+    public static int[] closeDiagonalWinner(char[][] board, char player) {
+        int empty = 0;
+        int amountOfSame = 0;
+        int[] emptyCords = null;
+        for (int i = 0, y = 0; i < 3 && y < 3; i++, y++) {
+            if (board[i][y] == '\0') {
+                emptyCords = new int[]{i, y};
+                empty++;
+                continue;
+            }
+            if(empty == 2) {
+                break;
+            }
+            if(board[i][y] == player) {
+                amountOfSame++;
+            }
+        } if (amountOfSame + empty == 3 && empty == 1) {
+            return emptyCords;
+        }
+        empty = 0;
+        amountOfSame = 0;
+        emptyCords = null;
+        for (int i = 0, y = 2; i < 3 && y < 3; i++, y--) {
+            if (board[i][y] == '\0') {
+                emptyCords = new int[]{i, y};
+                empty++;
+                continue;
+            }
+            if(empty == 2) {
+                break;
+            }
+            if(board[i][y] == player) {
+                amountOfSame++;
+            }
+        } if (amountOfSame + empty == 3 && empty == 1) {
+            return emptyCords;
+        }
+        return emptyCords;
     }
 }

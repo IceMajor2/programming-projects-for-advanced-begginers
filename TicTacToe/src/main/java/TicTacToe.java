@@ -13,7 +13,7 @@ public class TicTacToe {
         //System.out.println("Computer is: " + playerAI);
 
         char currPlayer = player == 'X' ? player : playerAI;
-        while (winner(board) == '\0') {
+        while (winner(board) == '\0' && emptySlotsCount(board) != 0) {
             if (currPlayer == player) {
                 int[] cords = randomAI(board, currPlayer);
                 board = makeMove(board, cords, currPlayer);
@@ -30,7 +30,7 @@ public class TicTacToe {
             render(board);
             currPlayer = currPlayer == player ? playerAI : player;
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
         }

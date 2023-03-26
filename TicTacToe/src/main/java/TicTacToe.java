@@ -30,7 +30,7 @@ public class TicTacToe {
             render(board);
             currPlayer = currPlayer == player ? playerAI : player;
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
             }
         }
@@ -67,6 +67,7 @@ public class TicTacToe {
         if(closeDiagonal != null) {
             return closeDiagonal;
         }
+        
         return randomAI(board, player);
     }
 
@@ -299,6 +300,6 @@ public class TicTacToe {
         } if (amountOfSame + empty == 3 && empty == 1) {
             return emptyCords;
         }
-        return emptyCords;
+        return null;
     }
 }

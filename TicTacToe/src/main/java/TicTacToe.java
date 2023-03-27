@@ -77,14 +77,7 @@ public class TicTacToe {
             render(board);
             currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
         }
-        char winner = winner(board);
-        if (winner == '\0') {
-            return '\0';
-        }
-        if (winner == 'X') {
-            return 'X';
-        }
-        return 'O';
+        return winner(board);
     }
 
     public static int[] play(char[][] board, char player01, char player02, int times) {
@@ -343,7 +336,8 @@ public class TicTacToe {
 
     public static char horizontalWinner(char[][] board) {
         for (int i = 0; i < board.length; i++) {
-            if (board[i][0] == board[i][1] && board[i][0] == board[i][2]) {
+            if (board[i][0] == board[i][1] && board[i][0] == board[i][2]
+                    && board[i][0] != '\0') {
                 return board[i][0];
             }
         }
@@ -353,7 +347,8 @@ public class TicTacToe {
     public static char verticalWinner(char[][] board) {
         for (int i = 0; i < board.length; i++) {
             for (int y = 0; y < board[i].length; y++) {
-                if (board[0][y] == board[1][y] && board[0][y] == board[2][y]) {
+                if (board[0][y] == board[1][y] && board[0][y] == board[2][y]
+                        && board[0][y] != '\0') {
                     return board[0][y];
                 }
             }
@@ -362,10 +357,12 @@ public class TicTacToe {
     }
 
     public static char diagonalWinner(char[][] board) {
-        if (board[0][0] == board[1][1] && board[0][0] == board[2][2]) {
+        if (board[0][0] == board[1][1] && board[0][0] == board[2][2]
+                && board[0][0] != '\0') {
             return board[0][0];
         }
-        if (board[0][2] == board[1][1] && board[0][2] == board[2][0]) {
+        if (board[0][2] == board[1][1] && board[0][2] == board[2][0]
+                && board[0][2] != '\0') {
             return board[0][2];
         }
         return '\0';

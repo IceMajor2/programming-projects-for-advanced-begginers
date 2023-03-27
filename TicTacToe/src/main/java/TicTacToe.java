@@ -6,38 +6,158 @@ public class TicTacToe {
 
     public static void main(String[] args) {
         char[][] board = new char[3][3];
-        char player01 = 'X';
-        char player02 = 'O';
-        render(board);
+        char[] players = players();
+        char player01 = players[0];
+        char player02 = players[1];
+        int times = times();
+        if (times == 1) {
+            char winner = play(board, player01, player02);
+            printStatistics(winner);
+        } else if (times >= 2) {
+            int[] stats = play(board, player01, player02, times);
+            printStatistics(stats[0], stats[1], stats[2]);
+        }
+    }
 
-        char currPlayer = 'X';
+    public static char play(char[][] board, char player01, char player02) {
+        render(board);
+        char currentPlayer = 'X';
         while (winner(board) == '\0' && emptySlotsCount(board) != 0) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-            }
-            if (currPlayer == player01) {
-                int[] cords = quiteIntelligentAI(board, currPlayer);
-                board = makeMove(board, cords, currPlayer);
-            } else if (currPlayer == player02) {
-                int[] cords = humanPlayer(board, currPlayer);
-                board = makeMove(board, cords, currPlayer);
+            switch (currentPlayer) {
+                case 'X':
+                    switch (player01) {
+                        case '1':
+                            int[] cords = humanPlayer(board, 'X');
+                            board = makeMove(board, cords, 'X');
+                            break;
+                        case '2':
+                            cords = randomAI(board, 'X');
+                            board = makeMove(board, cords, 'X');
+                            break;
+                        case '3':
+                            cords = leastIntelligentAI(board, 'X');
+                            board = makeMove(board, cords, 'X');
+                            break;
+                        case '4':
+                            cords = quiteIntelligentAI(board, 'X');
+                            board = makeMove(board, cords, 'X');
+                            break;
+                    }
+                    break;
+                case 'O':
+                    switch (player02) {
+                        case '1':
+                            int[] cords = humanPlayer(board, 'O');
+                            board = makeMove(board, cords, 'O');
+                            break;
+                        case '2':
+                            cords = randomAI(board, 'O');
+                            board = makeMove(board, cords, 'O');
+                            break;
+                        case '3':
+                            cords = leastIntelligentAI(board, 'O');
+                            board = makeMove(board, cords, 'O');
+                            break;
+                        case '4':
+                            cords = quiteIntelligentAI(board, 'O');
+                            board = makeMove(board, cords, 'O');
+                            break;
+                    }
+                    break;
             }
             render(board);
-            currPlayer = currPlayer == player01 ? player02 : player01;
+            currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
         }
         char winner = winner(board);
         if (winner == '\0') {
-            System.out.println("DRAW");
-        } else {
-            System.out.println(winner + " WINS");
+            return '\0';
         }
+        if (winner == 'X') {
+            return 'X';
+        }
+        return 'O';
+    }
+
+    public static int[] play(char[][] board, char player01, char player02, int times) {
+        int index = 1;
+        int draws = 0;
+        int xWins = 0;
+        int oWins = 0;
+        while (index <= times) {
+            int winner = play(board, player01, player02);
+            if (winner == 'X') {
+                xWins++;
+            } else if (winner == 'O') {
+                oWins++;
+            } else {
+                draws++;
+            }
+            index++;
+        }
+        return new int[]{xWins, oWins, draws};
+    }
+
+    public static void printStatistics(int xWins, int oWins, int draws) {
+        System.out.println("X won " + xWins + " times");
+        System.out.println("O won " + oWins + " times");
+        System.out.println("Draw happened " + draws + " times");
+    }
+
+    public static void printStatistics(char winner) {
+        if (winner == '\0') {
+            System.out.println("DRAW");
+            return;
+        }
+        System.out.println(winner + " wins");
+    }
+
+    public static int times() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("How many times would you like to play?");
+        int times = Integer.valueOf(scanner.nextLine());
+        return times;
+    }
+
+    public static void printAllPlayers() {
+        System.out.println("[1] Human player");
+        System.out.println("[2] Random player");
+        System.out.println("[3] AI that finds winning moves");
+        System.out.println("[4] AI that finds winning and losing moves");
+    }
+
+    public static char[] players() {
+        Scanner scanner = new Scanner(System.in);
+        char[] twoPlayers = new char[2];
+
+        while (true) {
+            System.out.println("What is 'X'?");
+            printAllPlayers();
+            String input = scanner.nextLine();
+            if (input.equals("1") || input.equals("2")
+                    || input.equals("3") || input.equals("4")) {
+                twoPlayers[0] = input.charAt(0);
+                break;
+            }
+            System.out.println("Wrong input. Try again.");
+        }
+        while (true) {
+            System.out.println("What is 'O'?");
+            printAllPlayers();
+            String input = scanner.nextLine();
+            if (input.equals("1") || input.equals("2")
+                    || input.equals("3") || input.equals("4")) {
+                twoPlayers[1] = input.charAt(0);
+                break;
+            }
+            System.out.println("Wrong input. Try again.");
+        }
+        return twoPlayers;
     }
 
     public static int[] humanPlayer(char[][] board, char player) {
         System.out.print("Give your move [" + player + "]: ");
         int[] cords = getMove();
-        while(!moveValid(board, cords)) {
+        while (!moveValid(board, cords)) {
             System.out.print("Try again: ");
             cords = getMove();
         }
@@ -50,7 +170,7 @@ public class TicTacToe {
         int[] cords = emptySlots[random.nextInt(emptySlots.length)];
         return cords;
     }
-    
+
     public static int[] leastIntelligentAI(char[][] board, char player) {
         int[] winningMove = winningMove(board, player);
         if (winningMove != null) {
@@ -71,7 +191,7 @@ public class TicTacToe {
         }
         return randomAI(board, player);
     }
-    
+
     public static int[] winningMove(char[][] board, char player) {
         int[] closeHorizontal = winningHorizontalMove(board, player);
         if (closeHorizontal != null) {

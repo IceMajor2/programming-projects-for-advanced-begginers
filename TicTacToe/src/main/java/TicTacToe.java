@@ -1,4 +1,5 @@
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -42,6 +43,10 @@ public class TicTacToe {
                             cords = quiteIntelligentAI(board, 'X');
                             board = makeMove(board, cords, 'X');
                             break;
+                        case '5':
+                            cords = minimaxAI(board, 'X');
+                            board = makeMove(board, cords, 'X');
+                            break;
                     }
                     break;
                 case 'O':
@@ -60,6 +65,10 @@ public class TicTacToe {
                             break;
                         case '4':
                             cords = quiteIntelligentAI(board, 'O');
+                            board = makeMove(board, cords, 'O');
+                            break;
+                        case '5':
+                            cords = minimaxAI(board, 'O');
                             board = makeMove(board, cords, 'O');
                             break;
                     }
@@ -123,6 +132,7 @@ public class TicTacToe {
         System.out.println("[2] Random player");
         System.out.println("[3] AI that finds winning moves");
         System.out.println("[4] AI that finds winning and losing moves");
+        System.out.println("[5] The Unbeateable MINIMAX");
     }
 
     public static char[] players() {
@@ -134,7 +144,8 @@ public class TicTacToe {
             printAllPlayers();
             String input = scanner.nextLine();
             if (input.equals("1") || input.equals("2")
-                    || input.equals("3") || input.equals("4")) {
+                    || input.equals("3") || input.equals("4")
+                    || input.equals("5")) {
                 twoPlayers[0] = input.charAt(0);
                 break;
             }
@@ -145,7 +156,8 @@ public class TicTacToe {
             printAllPlayers();
             String input = scanner.nextLine();
             if (input.equals("1") || input.equals("2")
-                    || input.equals("3") || input.equals("4")) {
+                    || input.equals("3") || input.equals("4")
+                    || input.equals("5")) {
                 twoPlayers[1] = input.charAt(0);
                 break;
             }
@@ -190,6 +202,51 @@ public class TicTacToe {
             return losingMove;
         }
         return randomAI(board, player);
+    }
+
+    public static int[] minimaxAI(char[][] board, char player) {
+        int maxScore = -99;
+        int[] bestMove = null;
+
+        for (int[] move : getEmptySlots(board)) {
+            char[][] hypoBoard = makeMove(board, move, player);
+            char opponent = player == 'X' ? 'O' : 'X';
+            int minimaxScore = minimaxScore(hypoBoard, opponent, player);
+            if (minimaxScore > maxScore) {
+                maxScore = minimaxScore;
+                bestMove = move;
+            }
+        }
+        return bestMove;
+    }
+
+    public static int minimaxScore(char[][] board, char player, char AI) {
+        char winner = winner(board);
+        if (winner == AI) {
+            return 10;
+        } else if (winner != AI && winner != '\0') {
+            return -10;
+        } else if (winner == '\0' && emptySlotsCount(board) == 0) {
+            return 0;
+        }
+
+        int[][] legalMoves = getEmptySlots(board);
+        int[] scores = new int[legalMoves.length];
+
+        int i = 0;
+        for (int[] move : legalMoves) {
+            char[][] hypoBoard = makeMove(board, move, player);
+            char opponent = player == 'X' ? 'O' : 'X';
+            int score = minimaxScore(hypoBoard, opponent, AI);
+            scores[i] = score;
+            i++;
+        }
+        if (player == AI) {
+            int max = Arrays.stream(scores).max().getAsInt();
+            return max;
+        }
+        int min = Arrays.stream(scores).min().getAsInt();
+        return min;
     }
 
     public static int[] winningMove(char[][] board, char player) {

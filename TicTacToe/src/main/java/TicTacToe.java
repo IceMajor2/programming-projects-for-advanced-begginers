@@ -218,14 +218,14 @@ public class TicTacToe {
                 maxScore = minimaxScore;
                 bestMove = move;
             }
-            /*if(minimaxScore == 0 && maxScore != 10) {
+            if(minimaxScore == 0 && maxScore != 10) {
                 int tieBreaker = minimaxTieBreaker(hypoBoard, move);
                 minimaxScore = tieBreaker;
                 if(tieBreaker > maxScore) {
                     maxScore = tieBreaker;
                     bestMove = move;
                 }
-            }*/
+            }
         }
         return bestMove;
     }

@@ -74,6 +74,9 @@ public class TicTacToe {
                     }
                     break;
             }
+            try {
+                Thread.sleep(1500);
+            } catch(InterruptedException e) {}
             render(board);
             currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
         }
@@ -211,7 +214,7 @@ public class TicTacToe {
             }
         }
         if (maxScore == 0) {
-            
+
         }
         return bestMove;
     }
@@ -234,8 +237,14 @@ public class TicTacToe {
             char[][] hypoBoard = makeMove(board, move, player);
             char opponent = player == 'X' ? 'O' : 'X';
             int score = minimaxScore(hypoBoard, opponent, AI);
-            if(inTheCorner(move)) {
+            
+            int inRowPoints = inRowPoints(board, move, player);
+            if(inRowPoints != 0 && inTheCorner(move)) {
+                score += inRowPoints + 1;
+            } else if (inTheCorner(move)) {
                 score += 1;
+            } else if (inRowPoints != 0) {
+                score += inRowPoints;
             }
             scores[i] = score;
             i++;
@@ -247,25 +256,67 @@ public class TicTacToe {
         int min = Arrays.stream(scores).min().getAsInt();
         return min;
     }
-    
-    public static boolean inRow(char[][] board, char player, int[] move) {
+
+    public static int inRowPoints(char[][] board, int[] move, char player) {
         char[][] hypoBoard = makeMove(board, move, player);
-        for(int i = 0; i < board.length; i++) {
-            for(int y = 0; y < board[i].length; y++) {
-                
+        int sameInRow = 0;
+        int sameInColumn = 0;
+        int sameInDiag = 0;
+        int row = move[0];
+        int column = move[1];
+        for (int i = 0; i < 3; i++) {
+            if (hypoBoard[row][i] == player) {
+                sameInRow++;
+            }
+            if (hypoBoard[i][column] == player) {
+                sameInColumn++;
             }
         }
-        return false;
+        if (row == 0 && column == 0 || row == 1 && column == 1
+                || row == 2 && column == 2) {
+            if (hypoBoard[0][0] == player) {
+                sameInDiag++;
+            }
+            if (hypoBoard[1][1] == player) {
+                sameInDiag++;
+            }
+            if (hypoBoard[2][2] == player) {
+                sameInDiag++;
+            }
+        }
+        if (row == 0 && column == 2 || row == 1 && column == 1
+                || row == 2 && column == 0) {
+            if (hypoBoard[0][2] == player) {
+                sameInDiag++;
+            }
+            if (hypoBoard[1][1] == player) {
+                sameInDiag++;
+            }
+            if (hypoBoard[2][0] == player) {
+                sameInDiag++;
+            }
+        }
+        int points = 0;
+        if(sameInRow == 2) {
+            points++;
+        }
+        if(sameInColumn == 2) {
+            points++;
+        }
+        if(sameInDiag == 2) {
+            points++;
+        }
+        return points;
     }
-    
+
     public static boolean inTheCorner(int[] move) {
-        if(move[0] == 0 && move[1] == 0) {
+        if (move[0] == 0 && move[1] == 0) {
             return true;
         }
-        if(move[0] == 2 && move[1] == 0) {
+        if (move[0] == 2 && move[1] == 0) {
             return true;
         }
-        if(move[0] == 0 && move[1] == 2) {
+        if (move[0] == 0 && move[1] == 2) {
             return true;
         }
         return move[0] == 2 && move[1] == 2;

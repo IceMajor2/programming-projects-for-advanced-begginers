@@ -85,7 +85,6 @@ public class TicTacToe {
                     System.out.println(e);
                 }
             }
-
             render(board);
             currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
         }
@@ -256,18 +255,14 @@ public class TicTacToe {
             char opponent = player == 'X' ? 'O' : 'X';
             int score = -11;
             if (withCache) {
-                int key = boardAsString(hypoBoard).hashCode();
+                int key = boardHashValue(hypoBoard, player);
                 if (!CACHE.containsKey(key)) {
                     score = minimaxScore(hypoBoard, opponent, AI, withCache);
                     CACHE.put(key, score);
-                } else {
-                    score = CACHE.get(key);
                 }
+                score = CACHE.get(key);
             } else {
                 score = minimaxScore(hypoBoard, opponent, AI, withCache);
-            }
-            if (score == -11) {
-                System.out.println("DFSFJKDSVLSDCVBJKL;DSC");
             }
             scores[i] = score;
             i++;
@@ -286,7 +281,7 @@ public class TicTacToe {
         return tieBreakerPts;
     }
 
-    public static String boardAsString(char[][] board) {
+    public static int boardHashValue(char[][] board, char player) {
         StringBuilder sb = new StringBuilder("");
         for (char[] row : board) {
             for (char ch : row) {
@@ -297,7 +292,8 @@ public class TicTacToe {
                 sb.append(ch);
             }
         }
-        return sb.toString();
+        sb.append(player);
+        return sb.toString().hashCode();
     }
 
     public static int inRowPoints(char[][] board, int[] move) {

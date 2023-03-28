@@ -274,35 +274,31 @@ public class TicTacToe {
         int row = move[0];
         int column = move[1];
         for (int i = 0; i < 3; i++) {
-            if (board[row][i] == player) {
-                sameInRow++;
+            if (board[row][0] == player && board[row][1] == player
+                    || board[row][1] == player && board[row][2] == player) {
+                sameInRow = 2;
             }
-            if (board[i][column] == player) {
-                sameInColumn++;
+            if (board[0][column] == player && board[1][column] == player
+                    || board[1][column] == player && board[2][column] == player) {
+                sameInColumn = 2;
             }
         }
         if (row == 0 && column == 0 || row == 1 && column == 1
                 || row == 2 && column == 2) {
-            if (board[0][0] == player) {
-                sameInDiag++;
+            if (board[0][0] == player && board[1][1] == player) {
+                sameInDiag = 2;
             }
-            if (board[1][1] == player) {
-                sameInDiag++;
-            }
-            if (board[2][2] == player) {
-                sameInDiag++;
+            if (board[1][1] == player && board[2][2] == player) {
+                sameInDiag = 2;
             }
         }
         if (row == 0 && column == 2 || row == 1 && column == 1
                 || row == 2 && column == 0) {
-            if (board[0][2] == player) {
-                sameInDiag++;
+            if (board[0][2] == player && board[1][1] == player) {
+                sameInDiag = 2;
             }
-            if (board[1][1] == player) {
-                sameInDiag++;
-            }
-            if (board[2][0] == player) {
-                sameInDiag++;
+            if (board[2][0] == player && board[1][1] == player) {
+                sameInDiag = 2;
             }
         }
         int points = 0;

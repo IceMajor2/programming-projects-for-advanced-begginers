@@ -12,7 +12,7 @@ public class TicTacToe {
         char player02 = players[1];
         int times = times();
         if (times == 1) {
-            char winner = play(board, player01, player02);
+            char winner = play(board, player01, player02, true);
             printStatistics(winner);
         } else if (times >= 2) {
             int[] stats = play(board, player01, player02, times);
@@ -20,7 +20,7 @@ public class TicTacToe {
         }
     }
 
-    public static char play(char[][] board, char player01, char player02) {
+    public static char play(char[][] board, char player01, char player02, boolean onTimer) {
         render(board);
         char currentPlayer = 'X';
         while (winner(board) == '\0' && emptySlotsCount(board) != 0) {
@@ -74,9 +74,14 @@ public class TicTacToe {
                     }
                     break;
             }
-            try {
-                Thread.sleep(1500);
-            } catch(InterruptedException e) {}
+            if (onTimer) {
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    System.out.println(e);
+                }
+            }
+
             render(board);
             currentPlayer = currentPlayer == 'X' ? 'O' : 'X';
         }
@@ -88,8 +93,9 @@ public class TicTacToe {
         int draws = 0;
         int xWins = 0;
         int oWins = 0;
+        boolean onTimer = times <= 3 ? true : false;
         while (index <= times) {
-            int winner = play(board, player01, player02);
+            int winner = play(board, player01, player02, onTimer);
             if (winner == 'X') {
                 xWins++;
             } else if (winner == 'O') {
@@ -212,13 +218,18 @@ public class TicTacToe {
                 maxScore = minimaxScore;
                 bestMove = move;
             }
-        }
-        if (maxScore == 0) {
-
+            /*if(minimaxScore == 0 && maxScore != 10) {
+                int tieBreaker = minimaxTieBreaker(hypoBoard, move);
+                minimaxScore = tieBreaker;
+                if(tieBreaker > maxScore) {
+                    maxScore = tieBreaker;
+                    bestMove = move;
+                }
+            }*/
         }
         return bestMove;
     }
-
+    
     public static int minimaxScore(char[][] board, char player, char AI) {
         char winner = winner(board);
         if (winner == AI) {
@@ -237,15 +248,7 @@ public class TicTacToe {
             char[][] hypoBoard = makeMove(board, move, player);
             char opponent = player == 'X' ? 'O' : 'X';
             int score = minimaxScore(hypoBoard, opponent, AI);
-            
-            int inRowPoints = inRowPoints(board, move, player);
-            if(inRowPoints != 0 && inTheCorner(move)) {
-                score += inRowPoints + 1;
-            } else if (inTheCorner(move)) {
-                score += 1;
-            } else if (inRowPoints != 0) {
-                score += inRowPoints;
-            }
+
             scores[i] = score;
             i++;
         }
@@ -256,54 +259,60 @@ public class TicTacToe {
         int min = Arrays.stream(scores).min().getAsInt();
         return min;
     }
+    
+    public static int minimaxTieBreaker(char[][] board, int[] move) {
+        int tieBreakerPts = inTheCorner(move) ? 1 : 0;
+        tieBreakerPts += inRowPoints(board, move);
+        return tieBreakerPts;
+    }
 
-    public static int inRowPoints(char[][] board, int[] move, char player) {
-        char[][] hypoBoard = makeMove(board, move, player);
+    public static int inRowPoints(char[][] board, int[] move) {
+        char player = board[move[0]][move[1]];
         int sameInRow = 0;
         int sameInColumn = 0;
         int sameInDiag = 0;
         int row = move[0];
         int column = move[1];
         for (int i = 0; i < 3; i++) {
-            if (hypoBoard[row][i] == player) {
+            if (board[row][i] == player) {
                 sameInRow++;
             }
-            if (hypoBoard[i][column] == player) {
+            if (board[i][column] == player) {
                 sameInColumn++;
             }
         }
         if (row == 0 && column == 0 || row == 1 && column == 1
                 || row == 2 && column == 2) {
-            if (hypoBoard[0][0] == player) {
+            if (board[0][0] == player) {
                 sameInDiag++;
             }
-            if (hypoBoard[1][1] == player) {
+            if (board[1][1] == player) {
                 sameInDiag++;
             }
-            if (hypoBoard[2][2] == player) {
+            if (board[2][2] == player) {
                 sameInDiag++;
             }
         }
         if (row == 0 && column == 2 || row == 1 && column == 1
                 || row == 2 && column == 0) {
-            if (hypoBoard[0][2] == player) {
+            if (board[0][2] == player) {
                 sameInDiag++;
             }
-            if (hypoBoard[1][1] == player) {
+            if (board[1][1] == player) {
                 sameInDiag++;
             }
-            if (hypoBoard[2][0] == player) {
+            if (board[2][0] == player) {
                 sameInDiag++;
             }
         }
         int points = 0;
-        if(sameInRow == 2) {
+        if (sameInRow == 2) {
             points++;
         }
-        if(sameInColumn == 2) {
+        if (sameInColumn == 2) {
             points++;
         }
-        if(sameInDiag == 2) {
+        if (sameInDiag == 2) {
             points++;
         }
         return points;

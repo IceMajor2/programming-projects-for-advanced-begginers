@@ -2,8 +2,12 @@
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Random;
+import java.util.HashMap;
 
 public class TicTacToe {
+
+    public static HashMap<Integer, Integer> CACHE = new HashMap<>();
+    public static boolean CACHE_ENABLED = false;
 
     public static void main(String[] args) {
         char[][] board = new char[3][3];
@@ -44,7 +48,7 @@ public class TicTacToe {
                             board = makeMove(board, cords, 'X');
                             break;
                         case '5':
-                            cords = minimaxAI(board, 'X');
+                            cords = minimaxAI(board, 'X', CACHE_ENABLED);
                             board = makeMove(board, cords, 'X');
                             break;
                     }
@@ -68,7 +72,7 @@ public class TicTacToe {
                             board = makeMove(board, cords, 'O');
                             break;
                         case '5':
-                            cords = minimaxAI(board, 'O');
+                            cords = minimaxAI(board, 'O', CACHE_ENABLED);
                             board = makeMove(board, cords, 'O');
                             break;
                     }
@@ -94,6 +98,7 @@ public class TicTacToe {
         int xWins = 0;
         int oWins = 0;
         boolean onTimer = times <= 3 ? true : false;
+        long start = System.currentTimeMillis();
         while (index <= times) {
             int winner = play(board, player01, player02, onTimer);
             if (winner == 'X') {
@@ -105,6 +110,8 @@ public class TicTacToe {
             }
             index++;
         }
+        long end = System.currentTimeMillis();
+        System.out.println("Calculations took: " + (end - start) + " ms");
         return new int[]{xWins, oWins, draws};
     }
 
@@ -206,22 +213,22 @@ public class TicTacToe {
         return randomAI(board, player);
     }
 
-    public static int[] minimaxAI(char[][] board, char player) {
+    public static int[] minimaxAI(char[][] board, char player, boolean withCache) {
         int maxScore = -99;
         int[] bestMove = null;
 
         for (int[] move : getEmptySlots(board)) {
             char[][] hypoBoard = makeMove(board, move, player);
             char opponent = player == 'X' ? 'O' : 'X';
-            int minimaxScore = minimaxScore(hypoBoard, opponent, player);
+            int minimaxScore = minimaxScore(hypoBoard, opponent, player, withCache);
             if (minimaxScore > maxScore) {
                 maxScore = minimaxScore;
                 bestMove = move;
             }
-            if(minimaxScore == 0 && maxScore != 10) {
+            if (minimaxScore == 0 && maxScore != 10) {
                 int tieBreaker = minimaxTieBreaker(hypoBoard, move);
                 minimaxScore = tieBreaker;
-                if(tieBreaker > maxScore) {
+                if (tieBreaker > maxScore) {
                     maxScore = tieBreaker;
                     bestMove = move;
                 }
@@ -229,8 +236,8 @@ public class TicTacToe {
         }
         return bestMove;
     }
-    
-    public static int minimaxScore(char[][] board, char player, char AI) {
+
+    public static int minimaxScore(char[][] board, char player, char AI, boolean withCache) {
         char winner = winner(board);
         if (winner == AI) {
             return 10;
@@ -247,8 +254,21 @@ public class TicTacToe {
         for (int[] move : legalMoves) {
             char[][] hypoBoard = makeMove(board, move, player);
             char opponent = player == 'X' ? 'O' : 'X';
-            int score = minimaxScore(hypoBoard, opponent, AI);
-
+            int score = -11;
+            if (withCache) {
+                int key = boardAsString(hypoBoard).hashCode();
+                if (!CACHE.containsKey(key)) {
+                    score = minimaxScore(hypoBoard, opponent, AI, withCache);
+                    CACHE.put(key, score);
+                } else {
+                    score = CACHE.get(key);
+                }
+            } else {
+                score = minimaxScore(hypoBoard, opponent, AI, withCache);
+            }
+            if (score == -11) {
+                System.out.println("DFSFJKDSVLSDCVBJKL;DSC");
+            }
             scores[i] = score;
             i++;
         }
@@ -259,11 +279,25 @@ public class TicTacToe {
         int min = Arrays.stream(scores).min().getAsInt();
         return min;
     }
-    
+
     public static int minimaxTieBreaker(char[][] board, int[] move) {
         int tieBreakerPts = inTheCorner(move) ? 1 : 0;
         tieBreakerPts += inRowPoints(board, move);
         return tieBreakerPts;
+    }
+
+    public static String boardAsString(char[][] board) {
+        StringBuilder sb = new StringBuilder("");
+        for (char[] row : board) {
+            for (char ch : row) {
+                if (ch == '\0') {
+                    sb.append('0');
+                    continue;
+                }
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
     public static int inRowPoints(char[][] board, int[] move) {

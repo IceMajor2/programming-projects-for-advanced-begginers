@@ -210,6 +210,9 @@ public class TicTacToe {
                 bestMove = move;
             }
         }
+        if (maxScore == 0) {
+            
+        }
         return bestMove;
     }
 
@@ -231,6 +234,9 @@ public class TicTacToe {
             char[][] hypoBoard = makeMove(board, move, player);
             char opponent = player == 'X' ? 'O' : 'X';
             int score = minimaxScore(hypoBoard, opponent, AI);
+            if(inTheCorner(move)) {
+                score += 1;
+            }
             scores[i] = score;
             i++;
         }
@@ -240,6 +246,29 @@ public class TicTacToe {
         }
         int min = Arrays.stream(scores).min().getAsInt();
         return min;
+    }
+    
+    public static boolean inRow(char[][] board, char player, int[] move) {
+        char[][] hypoBoard = makeMove(board, move, player);
+        for(int i = 0; i < board.length; i++) {
+            for(int y = 0; y < board[i].length; y++) {
+                
+            }
+        }
+        return false;
+    }
+    
+    public static boolean inTheCorner(int[] move) {
+        if(move[0] == 0 && move[1] == 0) {
+            return true;
+        }
+        if(move[0] == 2 && move[1] == 0) {
+            return true;
+        }
+        if(move[0] == 0 && move[1] == 2) {
+            return true;
+        }
+        return move[0] == 2 && move[1] == 2;
     }
 
     public static int[] winningMove(char[][] board, char player) {

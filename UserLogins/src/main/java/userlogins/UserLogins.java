@@ -17,8 +17,7 @@ public class UserLogins {
     public static List<LinkedHashMap> credentials = loadConfig();
 
     public static void main(String[] args) {
-        
-        // runUI();
+        runUI();
     }
 
     public static List<LinkedHashMap> loadConfig() {
@@ -48,6 +47,13 @@ public class UserLogins {
     }
 
     public static boolean credentialsValid(String usr, String pass) {
+        String hashedPass = getSHA256(pass);
+        for (LinkedHashMap usrData : credentials) {
+            if (usrData.get("username").equals(usr)
+                    && usrData.get("password_hash").equals(hashedPass)) {
+                return true;
+            }
+        }
         return false;
     }
 

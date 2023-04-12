@@ -1,8 +1,12 @@
 package userlogins;
 
 import java.util.Scanner;
-import java.util.Map;
-
+import java.util.*;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import org.yaml.snakeyaml.Yaml;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
@@ -10,10 +14,25 @@ import java.security.NoSuchAlgorithmException;
 
 public class UserLogins {
 
-    public static Map<String, String> credentialsDb
-            = Map.of("ping", getSHA256("pong"), "ching", getSHA256("chang"));
+    public static List<LinkedHashMap> credentials = loadConfig();
 
     public static void main(String[] args) {
+        
+        // runUI();
+    }
+
+    public static List<LinkedHashMap> loadConfig() {
+        try {
+            InputStream inputStream = new FileInputStream(new File("config.yaml"));
+            Yaml yaml = new Yaml();
+            var credentials = (List<LinkedHashMap>) yaml.load(inputStream);
+            return credentials;
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    public static void runUI() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter username: ");
@@ -29,8 +48,7 @@ public class UserLogins {
     }
 
     public static boolean credentialsValid(String usr, String pass) {
-        return credentialsDb.containsKey(usr)
-                && credentialsDb.containsValue(getSHA256(pass));
+        return false;
     }
 
     public static byte[] bytesSHA256(String password) {
@@ -41,13 +59,13 @@ public class UserLogins {
             throw new RuntimeException(e);
         }
     }
-    
+
     public static String getSHA256(String password) {
         byte[] bytesSHA = bytesSHA256(password);
         BigInteger number = new BigInteger(1, bytesSHA);
         StringBuilder hexString = new StringBuilder(number.toString(16));
-        
-        while(hexString.length() < 64) {
+
+        while (hexString.length() < 64) {
             hexString.insert(0, '0');
         }
         return hexString.toString();

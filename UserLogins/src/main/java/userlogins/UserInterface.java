@@ -20,11 +20,19 @@ public class UserInterface {
         System.out.println("2. Create new user");
         System.out.println("0. Exit");
         String choice = scanner.nextLine();
-        if(choice.equals("0")) {
+        if (choice.equals("0")) {
             return;
         }
         if (choice.equals("1")) {
-
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+            if(db.hasUser(username, AppLogic.getSHA256(password))) {
+                System.out.println("Magic world accessed!");
+            } else {
+                System.out.println("Fuck off");
+            }
         }
         if (choice.equals("2")) {
             String[] credentials = getCredentials();
@@ -36,7 +44,7 @@ public class UserInterface {
         while (true) {
             System.out.print("Enter username: ");
             String username = scanner.nextLine();
-            if(db.isUsernameTaken(username)) {
+            if (db.isUsernameTaken(username)) {
                 System.out.println("The username is already taken!");
                 continue;
             }

@@ -92,6 +92,20 @@ public class Database {
             return true;
         }
     }
+    
+    public boolean hasUser(String username, String passwordHash) {
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(String.format(
+            "SELECT count(1) FROM users "
+                    + "WHERE username = '%s'"
+                    + "AND "
+                    + "password_hash = '%s'", username, passwordHash));
+            return rs.getInt(1) != 0;
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public boolean recreateDatabase() {
         try {

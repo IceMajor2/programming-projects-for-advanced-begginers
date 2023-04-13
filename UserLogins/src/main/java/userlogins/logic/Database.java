@@ -1,4 +1,4 @@
-package logic;
+package userlogins.logic;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -106,11 +106,12 @@ public class Database {
 
     private Connection setup() {
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:database\\users.db");
+            conn = DriverManager.getConnection(String.format(
+                    "jdbc:sqlite:%s", PATH_TO_DB));
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users ("
                     + "username VARCHAR UNIQUE NOT NULL,"
-                    + "password_hash VARCHAR UNIQUE NOT NULL"
+                    + "password_hash VARCHAR NOT NULL"
                     + ")");
             stmt.close();
             return conn;

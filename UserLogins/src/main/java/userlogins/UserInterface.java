@@ -2,7 +2,7 @@ package userlogins;
 
 import static userlogins.UserLogins.db;
 import java.util.Scanner;
-import logic.AppLogic;
+import userlogins.logic.AppLogic;
 
 public class UserInterface {
 
@@ -18,7 +18,11 @@ public class UserInterface {
         }
         System.out.println("1. Log in");
         System.out.println("2. Create new user");
+        System.out.println("0. Exit");
         String choice = scanner.nextLine();
+        if(choice.equals("0")) {
+            return;
+        }
         if (choice.equals("1")) {
 
         }

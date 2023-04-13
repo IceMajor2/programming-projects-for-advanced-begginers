@@ -1,4 +1,4 @@
-package logic;
+package userlogins.logic;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,17 @@ import java.util.List;
 import org.yaml.snakeyaml.Yaml;
 
 public class AppLogic {
+    
+    public static String databaseFileName() {
+        try {
+            InputStream inputStream = new FileInputStream(new File("database_info.yaml"));
+            Yaml yaml = new Yaml();
+            LinkedHashMap info = yaml.load(inputStream);
+            return (String) info.get("db_name");
+        } catch(FileNotFoundException e) {
+            throw new RuntimeException();
+        }
+    }
 
     public static List<LinkedHashMap> loadConfig() {
         try {

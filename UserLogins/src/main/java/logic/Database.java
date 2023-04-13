@@ -69,6 +69,29 @@ public class Database {
         }
         return totalRows;
     }
+    
+    public void addUser(String username, String passwordHash) {
+        try {
+            Statement stmt = conn.createStatement();
+            String query = String.format("INSERT INTO users(username, password_hash) "
+                    + "VALUES ('%s', '%s')", username, passwordHash);
+            stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public boolean isUsernameTaken(String username) {
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(String.format(
+                    "SELECT COUNT(username) FROM users "
+                    + "WHERE username = '%s'", username));
+            return rs.getInt(1) != 0;
+        } catch(SQLException e) {
+            return true;
+        }
+    }
 
     public boolean recreateDatabase() {
         try {
@@ -86,8 +109,8 @@ public class Database {
             conn = DriverManager.getConnection("jdbc:sqlite:database\\users.db");
             Statement stmt = conn.createStatement();
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users ("
-                    + "username VARCHAR,"
-                    + "password_hash VARCHAR"
+                    + "username VARCHAR UNIQUE NOT NULL,"
+                    + "password_hash VARCHAR UNIQUE NOT NULL"
                     + ")");
             stmt.close();
             return conn;

@@ -16,10 +16,30 @@ public class UserInterface {
         if (db.exists() && db.allRows() != 0) {
             databaseDeleteChoice();
         }
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+        System.out.println("1. Log in");
+        System.out.println("2. Create new user");
+        String choice = scanner.nextLine();
+        if (choice.equals("1")) {
+
+        }
+        if (choice.equals("2")) {
+            String[] credentials = getCredentials();
+            db.addUser(credentials[0], credentials[1]);
+        }
+    }
+
+    public String[] getCredentials() {
+        while (true) {
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
+            if(db.isUsernameTaken(username)) {
+                System.out.println("The username is already taken!");
+                continue;
+            }
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+            return new String[]{username, AppLogic.getSHA256(password)};
+        }
     }
 
     public void databaseDeleteChoice() {
@@ -34,7 +54,7 @@ public class UserInterface {
         String input = scanner.nextLine();
         if ("y".equals(input.toLowerCase())) {
             boolean beenDeleted = db.recreateDatabase();
-            if(beenDeleted) {
+            if (beenDeleted) {
                 System.out.println("Database successfully deleted.");
             } else {
                 System.out.println("Couldn't delete database.");

@@ -11,28 +11,15 @@ public class Database {
     private Connection conn = null;
 
     public Database() {
-        this.openDb();
+        this.conn = this.openDb();
     }
 
-    private void openDb() {
+    private Connection openDb() {
         try {
-            conn = DriverManager.getConnection("jdbc:sqlite:users.db");
-            Statement stmt = conn.createStatement();
-            stmt.setQueryTimeout(30);
-
-            ResultSet rs = stmt.executeQuery("SELECT * FROM users");
-            while (rs.next()) {
-                System.out.println("username=" + rs.getString("username"));
-                System.out.println("pass_hash=" + rs.getString("password_hash"));
-            }
+            conn = DriverManager.getConnection("jdbc:sqlite:database\\users.db");
+            return conn;
         } catch (SQLException e) {
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-            }
+            throw new RuntimeException(e);
         }
     }
 

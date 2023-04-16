@@ -1,13 +1,10 @@
 package photomosaics;
 
-import org.imgscalr.Scalr;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
 public class Photomosaics {
 
@@ -15,37 +12,74 @@ public class Photomosaics {
             File.separator, "input", File.separator);
     public static String PATH_TO_OUTPUT = String.format("%s%s%s%s", "pictures",
             File.separator, "output", File.separator);
-    public static BufferedImage picSource;
 
     public static void main(String[] args) throws IOException {
-        picSource = ImageIO.read(new File(PATH_TO_INPUT + "nature.jpg"));
+        BufferedImage picSource = ImageIO.read(new File(PATH_TO_INPUT + "nature.jpg"));
+        double[][][] avgs = getPixelGroupsColor(picSource,
+                determinePixelGroupSideLength(picSource));
+    }
 
-        // just a reprint
-        ImageIO.write(picSource, "jpg", new File(PATH_TO_OUTPUT + "originalReprint.jpg"));
+    private static int determinePixelGroupSideLength(BufferedImage img) {
+        int picHeight = img.getHeight();
+        int picWidth = img.getWidth();
 
-        // print dimensions of img
-        System.out.println(String.format("HEIGHT x WIDTH = %d x %d",
-                picSource.getHeight(), picSource.getWidth()));
+        int minTotalR = 100;
+        int equivalentLength = 44;
+        for (int length = 45; length <= 55; length++) {
+            int heightR = picHeight % length;
+            int widthR = picWidth % length;
+            int totalR = heightR + widthR;
 
-        // scale down by 2
-        BufferedImage shrinkedBy2
-                = Scalr.resize(picSource, Scalr.Method.ULTRA_QUALITY,
-                        picSource.getWidth() / 2, picSource.getHeight() / 2);
-        ImageIO.write(shrinkedBy2, "jpg", new File(PATH_TO_OUTPUT + "shrinked.jpg"));
+            if (minTotalR > totalR) {
+                minTotalR = totalR;
+                equivalentLength = length;
+            }
+        }
+        return equivalentLength;
+    }
 
-        // flip horizontally
-        BufferedImage rotated = Scalr.rotate(picSource, Scalr.Rotation.CW_180);
-        ImageIO.write(rotated, "jpg", new File(PATH_TO_OUTPUT + "rotated180.jpg"));
+    public static double[][][] getPixelGroupsColor(BufferedImage img, int groupDim) {
+        int rows = img.getHeight() / groupDim;
+        int columns = img.getWidth() / groupDim;
+        double[][][] groups = new double[rows][columns][3];
+        
+        int row = 0;
+        while (row < rows) {
+            for (int column = 0; column < columns; column++) {
+                
+                double avgRed = 0;
+                double avgGreen = 0;
+                double avgBlue = 0;
 
-        // draw a rectangle on img
-        BufferedImage copyOfSrc = ImageIO.read(new File(PATH_TO_INPUT + "nature.jpg"));
-        Graphics2D g = copyOfSrc.createGraphics();
-        g.setColor(Color.red);
-        int squareSide = 500;
-        int posX = (copyOfSrc.getWidth() / 2) - (squareSide / 2);
-        int posY = (copyOfSrc.getHeight() / 2) - (squareSide / 2);
-        g.fill(new Rectangle(posX, posY, squareSide, squareSide));
-        g.dispose();
-        ImageIO.write(copyOfSrc, "jpg", new File(PATH_TO_OUTPUT + "rect.jpg"));
+                for (int x = column * groupDim; x < column * groupDim + groupDim; x++) {
+
+                    for (int y = row * groupDim; y < row * groupDim + groupDim; y++) {
+
+                        if(row == rows - 1) {
+                            
+                        }
+                        
+                        int pixel = img.getRGB(x, y);
+                        Color c = new Color(pixel);
+                        int red = c.getRed();
+                        int green = c.getGreen();
+                        int blue = c.getBlue();
+                        avgRed += red;
+                        avgGreen += green;
+                        avgBlue += blue;
+                        
+                    }
+                }
+
+                avgRed = avgRed / (double) (groupDim * groupDim);
+                avgGreen = avgGreen / (double) (groupDim * groupDim);
+                avgBlue = avgBlue / (double) (groupDim * groupDim);
+                groups[row][column][0] = avgRed;
+                groups[row][column][1] = avgGreen;
+                groups[row][column][2] = avgBlue;
+            }
+            row++;
+        }
+        return groups;
     }
 }

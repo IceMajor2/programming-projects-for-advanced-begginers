@@ -5,7 +5,14 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
+/*
+TODO:
+    - fix the not-quite-working imgs not divisible in <45; 55> range
+ */
 public class Photomosaics {
 
     public static String PATH_TO_INPUT = String.format("%s%s%s%s", "pictures",
@@ -15,8 +22,10 @@ public class Photomosaics {
 
     public static void main(String[] args) throws IOException {
         BufferedImage picSource = ImageIO.read(new File(PATH_TO_INPUT + "nature.jpg"));
-        double[][][] avgs = getPixelGroupsColor(picSource,
-                determinePixelGroupSideLength(picSource));
+        int groupDim = determinePixelGroupSideLength(picSource);
+        double[][][] avgs = getPixelGroupsColor(picSource, groupDim);
+        BufferedImage pixelated = pixelate(picSource, avgs, groupDim);
+        ImageIO.write(pixelated, "jpg", new File(PATH_TO_OUTPUT + "pixelated.jpg"));
     }
 
     private static int determinePixelGroupSideLength(BufferedImage img) {
@@ -42,11 +51,11 @@ public class Photomosaics {
         int rows = img.getHeight() / groupDim;
         int columns = img.getWidth() / groupDim;
         double[][][] groups = new double[rows][columns][3];
-        
+
         int row = 0;
         while (row < rows) {
             for (int column = 0; column < columns; column++) {
-                
+
                 double avgRed = 0;
                 double avgGreen = 0;
                 double avgBlue = 0;
@@ -55,10 +64,10 @@ public class Photomosaics {
 
                     for (int y = row * groupDim; y < row * groupDim + groupDim; y++) {
 
-                        if(row == rows - 1) {
-                            
+                        if (row == rows - 1) {
+
                         }
-                        
+
                         int pixel = img.getRGB(x, y);
                         Color c = new Color(pixel);
                         int red = c.getRed();
@@ -67,7 +76,7 @@ public class Photomosaics {
                         avgRed += red;
                         avgGreen += green;
                         avgBlue += blue;
-                        
+
                     }
                 }
 
@@ -82,4 +91,31 @@ public class Photomosaics {
         }
         return groups;
     }
+
+    public static BufferedImage pixelate(BufferedImage img, double[][][] pxGroup, int groupDim) {
+        BufferedImage copy = copyImage(img);
+        Graphics2D graph = copy.createGraphics();
+        for (int row = 0; row < pxGroup.length; row++) {
+
+            for (int column = 0; column < pxGroup[0].length; column++) {
+                int red = (int) pxGroup[row][column][0];
+                int green = (int) pxGroup[row][column][1];
+                int blue = (int) pxGroup[row][column][2];
+                graph.setColor(new Color(red, green, blue));
+                graph.fill(new Rectangle(column * groupDim, row * groupDim, groupDim, groupDim));
+
+            }
+        }
+        graph.dispose();
+        return copy;
+    }
+
+    public static BufferedImage copyImage(BufferedImage source) {
+        BufferedImage b = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
+        Graphics g = b.getGraphics();
+        g.drawImage(source, 0, 0, null);
+        g.dispose();
+        return b;
+    }
+
 }

@@ -12,6 +12,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Map;
+import java.util.HashMap;
+/*
+TODO:
+I should probably load RGB values of each source image into, if not database, then at least an YAML or JSON file
+*/
+
 
 public class Photomosaics {
 
@@ -21,16 +28,22 @@ public class Photomosaics {
             File.separator, "output", File.separator);
     public static String PATH_TO_DATASET = String.format("%s%s%s%s", "pictures",
             File.separator, "dataset", File.separator);
+    public static Map<String, int[]> IMGS_COLORS = loadColorValues();
 
     public static void main(String[] args) throws IOException {
-        cropDataset();
-        
-        BufferedImage picSource = ImageIO.read(new File(PATH_TO_INPUT + "sf.jpg"));
-        int groupDim = calculatePxGroupDimension(picSource);
-        //int groupDim = 5;
-        int[][][] avgs = pixelGroupsColorAvg(picSource, groupDim);
-        BufferedImage pixelated = pixelate(picSource, avgs, groupDim);
-        ImageIO.write(pixelated, "jpg", new File(PATH_TO_OUTPUT + "pixelated.jpg"));
+        for (var entry : IMGS_COLORS.entrySet()) {
+            int[] value = entry.getValue();
+            System.out.println(entry.getKey() + " -> " + value[0] + " " + value[1]
+                    + " " + value[2]);
+        }
+    }
+
+    public static void outputImg(BufferedImage img, String imgName, String format) throws IOException {
+        ImageIO.write(img, format, new File(PATH_TO_OUTPUT + imgName));
+    }
+
+    public static void outputImg(BufferedImage img, String imgName) throws IOException {
+        outputImg(img, imgName, "jpg");
     }
 
     public static int calculatePxGroupDimension(BufferedImage img) {
@@ -52,7 +65,7 @@ public class Photomosaics {
         return equivalentLength;
     }
 
-    public static int[][][] pixelGroupsColorAvg(BufferedImage img, int groupDim) {
+    public static int[][][] pixelGroup(BufferedImage img, int groupDim) {
         int picWidth = img.getWidth();
         int picHeight = img.getHeight();
 
@@ -87,7 +100,7 @@ public class Photomosaics {
                         group[y % groupDim][x % groupDim] = img.getRGB(x, y);
                     }
                 }
-                int[] avgRGB = colorAvgOfPixelGroup(group);
+                int[] avgRGB = calculateAverageColor(group);
                 int red = avgRGB[0];
                 int green = avgRGB[1];
                 int blue = avgRGB[2];
@@ -100,7 +113,7 @@ public class Photomosaics {
         return allGroups;
     }
 
-    public static int[] colorAvgOfPixelGroup(int[][] pixelGroup) {
+    public static int[] calculateAverageColor(int[][] pixelGroup) {
         double redTotal = 0;
         double greenTotal = 0;
         double blueTotal = 0;
@@ -176,4 +189,37 @@ public class Photomosaics {
         var newImg = Scalr.resize(img, Scalr.Mode.FIT_EXACT, smaller, smaller);
         return newImg;
     }
+
+    public static Map<String, int[]> loadColorValues() {
+        Map<String, int[]> colorValues = new HashMap<>();
+        File[] imgs = croppedDataset();
+
+        for (File imgFile : imgs) {
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(imgFile);
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+            int groupDim = img.getHeight();
+            int[] colorVal = pixelGroup(img, groupDim)[0][0];
+
+            colorValues.put(imgFile.getName(), colorVal);
+        }
+
+        return colorValues;
+    }
+
+    public static File[] croppedDataset() {
+        File dir = new File(PATH_TO_DATASET + "cropped" + File.separator);
+        File[] cropped = dir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                String name = pathname.getName().toLowerCase();
+                return pathname.isFile();
+            }
+        });
+        return cropped;
+    }
+
 }

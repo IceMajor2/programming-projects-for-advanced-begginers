@@ -175,7 +175,7 @@ public class ImageHandler {
                     double diff1 = distanceBetweenColors(pixelGroupAvg, rgb1);
                     double diff2 = distanceBetweenColors(pixelGroupAvg, rgb2);
                     return Double.valueOf(diff1).compareTo(diff2);
-                }).get().getKey();
+                }).get().getKey().getName();
         File file = new File(PATH_TO_DATASET + "cropped" + File.separator + closestImg);
         try {
             return ImageIO.read(file);

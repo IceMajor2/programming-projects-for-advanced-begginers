@@ -23,9 +23,11 @@ public class Photomosaics {
             File.separator, "dataset", File.separator);
 
     public static void main(String[] args) throws IOException {
+        cropDataset();
+        
         BufferedImage picSource = ImageIO.read(new File(PATH_TO_INPUT + "sf.jpg"));
-        //int groupDim = calculatePxGroupDimension(picSource);
-        int groupDim = 5;
+        int groupDim = calculatePxGroupDimension(picSource);
+        //int groupDim = 5;
         int[][][] avgs = pixelGroupsColorAvg(picSource, groupDim);
         BufferedImage pixelated = pixelate(picSource, avgs, groupDim);
         ImageIO.write(pixelated, "jpg", new File(PATH_TO_OUTPUT + "pixelated.jpg"));
@@ -150,7 +152,7 @@ public class Photomosaics {
         return b;
     }
 
-    public static void cropAllDataset() throws IOException {
+    public static void cropDataset() throws IOException {
         File dir = new File(PATH_TO_DATASET);
         File[] files = dir.listFiles(new FileFilter() {
             @Override

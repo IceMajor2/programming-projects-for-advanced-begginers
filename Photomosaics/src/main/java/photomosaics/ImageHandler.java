@@ -167,7 +167,7 @@ public class ImageHandler {
         return distance;
     }
 
-    public static String getMostSimilarImage(int[] pixelGroupAvg) {
+    public static BufferedImage getMostSimilarImage(int[] pixelGroupAvg) {
         String closestImg = IMGS_COLORS.entrySet().stream()
                 .min((img1, img2) -> {
                     int[] rgb1 = img1.getValue();
@@ -176,6 +176,37 @@ public class ImageHandler {
                     double diff2 = distanceBetweenColors(pixelGroupAvg, rgb2);
                     return Double.valueOf(diff1).compareTo(diff2);
                 }).get().getKey();
-        return closestImg;
+        File file = new File(PATH_TO_DATASET + "cropped" + File.separator + closestImg);
+        try {
+            return ImageIO.read(file);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public static BufferedImage photomosaic(BufferedImage img) {
+        BufferedImage photomosaic = DataHandler.copy(img);
+        Graphics2D graph = photomosaic.createGraphics();
+        
+        int groupDim = calculatePxGroupDimension(img);
+        int[][][] pixelGroups = pixelGroup(img, groupDim);
+        
+        int yPos = 0;
+        for(int[][] row : pixelGroups) {
+            
+            int xPos = 0;
+            for(int[] pixelGroup : row) {
+                
+                BufferedImage srcImg = getMostSimilarImage(pixelGroup);
+                srcImg = Scalr.resize(srcImg, groupDim);
+                
+                graph.drawImage(srcImg, xPos, yPos, null);
+
+                xPos += groupDim;
+            }
+            
+            yPos += groupDim;
+        }
+        return photomosaic;
     }
 }

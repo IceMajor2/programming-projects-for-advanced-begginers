@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 import javax.imageio.ImageIO;
 
 /*
@@ -21,11 +22,11 @@ public class Photomosaics {
     public static Map<String, int[]> IMGS_COLORS = DataHandler.loadColorValues();
 
     public static void main(String[] args) throws IOException {
-        BufferedImage input = ImageIO.read(new File(PATH_TO_INPUT + "nature.jpg"));
-        int pxGroupSize = ImageHandler.calculatePxGroupDimension(input);
-        int[] firstPxGroup = ImageHandler.pixelGroup(input, pxGroupSize)[0][0];
-        String similar = ImageHandler.getMostSimilarImage(firstPxGroup);
-        BufferedImage closest = ImageIO.read(new File(PATH_TO_DATASET + "cropped" + File.separator + similar));
-        System.out.println(similar + " + difference: " + ImageHandler.distanceBetweenColors(firstPxGroup, IMGS_COLORS.get(similar)));
+        File input = new File(PATH_TO_INPUT + "nature.jpg");
+        BufferedImage img = ImageIO.read(input);
+        BufferedImage output = ImageHandler.photomosaic(img);
+        File outputFile = new File(PATH_TO_OUTPUT + "photomosaic.jpg");
+        ImageIO.write(output, "jpg", outputFile);
+
     }
 }

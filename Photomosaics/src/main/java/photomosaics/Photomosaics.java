@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics2D;
 import javax.imageio.ImageIO;
 
 /*
 TODO:
-I should probably load RGB values of each source image into, if not database, then at least an YAML or JSON file
+    - there's no point in having more than 60x60 source images, think about sizing them down
+    - I should probably load RGB values of each source image into, if not database, then at least an YAML or JSON file
  */
 public class Photomosaics {
 
@@ -19,14 +19,13 @@ public class Photomosaics {
             File.separator, "output", File.separator);
     public static String PATH_TO_DATASET = String.format("%s%s%s%s", "pictures",
             File.separator, "dataset", File.separator);
-    public static Map<String, int[]> IMGS_COLORS = DataHandler.loadColorValues();
+    public static String DIRECT_PATH_TO_VALUES = String.format("%s%s%s%s%s%s%s",
+            "src", File.separator, "main", File.separator, "resources",
+            File.separator, "dataset_RGB.yml");
+    public static Map<String, int[]> IMGS_COLORS = null;
 
     public static void main(String[] args) throws IOException {
-        File input = new File(PATH_TO_INPUT + "nature.jpg");
-        BufferedImage img = ImageIO.read(input);
-        BufferedImage output = ImageHandler.photomosaic(img);
-        File outputFile = new File(PATH_TO_OUTPUT + "photomosaic.jpg");
-        ImageIO.write(output, "jpg", outputFile);
+        DataHandler.loadData();
 
     }
 }

@@ -185,10 +185,14 @@ public class ImageHandler {
     }
     
     public static BufferedImage photomosaic(BufferedImage img) {
+        int groupDim = calculatePxGroupDimension(img);
+        return photomosaic(img, groupDim);
+    }
+    
+    public static BufferedImage photomosaic(BufferedImage img, int groupDim) {
         BufferedImage photomosaic = DataHandler.copy(img);
         Graphics2D graph = photomosaic.createGraphics();
         
-        int groupDim = calculatePxGroupDimension(img);
         int[][][] pixelGroups = pixelGroup(img, groupDim);
         
         int yPos = 0;

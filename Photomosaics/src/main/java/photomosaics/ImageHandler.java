@@ -152,7 +152,17 @@ public class ImageHandler {
         return newImg;
     }
     
-    public static int[] distanceBetweenColors(int[] color1, int[] color2) {
-        return null;
+    public static double distanceBetweenColors(int[] color1, int[] color2) {
+        int r1 = color1[0];
+        int g1 = color1[1];
+        int b1 = color1[2];
+        
+        int r2 = color2[0];
+        int g2 = color2[1];
+        int b2 = color2[2];
+        
+        double distance = Math.pow((r2 - r1), 2) + Math.pow((g2 - g1), 2) + Math.pow((b2 - b1), 2);
+        distance = Math.sqrt(distance);
+        return distance;
     }
 }

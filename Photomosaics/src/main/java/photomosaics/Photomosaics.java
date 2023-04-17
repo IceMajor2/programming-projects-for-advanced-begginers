@@ -20,10 +20,6 @@ public class Photomosaics {
     public static Map<String, int[]> IMGS_COLORS = DataHandler.loadColorValues();
 
     public static void main(String[] args) throws IOException {
-        for (var entry : IMGS_COLORS.entrySet()) {
-            int[] value = entry.getValue();
-            System.out.println(entry.getKey() + " -> " + value[0] + " " + value[1]
-                    + " " + value[2]);
-        }
+        
     }
 }

@@ -12,11 +12,12 @@ import java.math.RoundingMode;
 import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
 import static photomosaics.Photomosaics.PATH_TO_DATASET;
+import static photomosaics.Photomosaics.IMGS_COLORS;
 
 public class ImageHandler {
-    
+
     public static int calculatePxGroupDimension(BufferedImage img) {
-        
+
         int picHeight = img.getHeight();
         int picWidth = img.getWidth();
 
@@ -151,18 +152,30 @@ public class ImageHandler {
         var newImg = Scalr.resize(img, Scalr.Mode.FIT_EXACT, smaller, smaller);
         return newImg;
     }
-    
+
     public static double distanceBetweenColors(int[] color1, int[] color2) {
         int r1 = color1[0];
         int g1 = color1[1];
         int b1 = color1[2];
-        
+
         int r2 = color2[0];
         int g2 = color2[1];
         int b2 = color2[2];
-        
+
         double distance = Math.pow((r2 - r1), 2) + Math.pow((g2 - g1), 2) + Math.pow((b2 - b1), 2);
         distance = Math.sqrt(distance);
         return distance;
+    }
+
+    public static String getMostSimilarImage(int[] pixelGroupAvg) {
+        String closestImg = IMGS_COLORS.entrySet().stream()
+                .min((img1, img2) -> {
+                    int[] rgb1 = img1.getValue();
+                    int[] rgb2 = img2.getValue();
+                    double diff1 = distanceBetweenColors(pixelGroupAvg, rgb1);
+                    double diff2 = distanceBetweenColors(pixelGroupAvg, rgb2);
+                    return Double.valueOf(diff1).compareTo(diff2);
+                }).get().getKey();
+        return closestImg;
     }
 }

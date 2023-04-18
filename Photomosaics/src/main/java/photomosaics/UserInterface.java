@@ -79,7 +79,7 @@ public class UserInterface {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Success!");
+        System.out.println("Success! RESTART PROGRAM.");
     }
 
     private File userSelectingFile() {

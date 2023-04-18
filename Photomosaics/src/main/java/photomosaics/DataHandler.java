@@ -128,6 +128,9 @@ public class DataHandler {
         Yaml yaml = new Yaml();
 
         Map<String, Object> data = yaml.load(inputStream);
+        if(data == null) {
+            return null;
+        }
         Map<File, int[]> output = new HashMap<>();
 
         for (var entry : data.entrySet()) {

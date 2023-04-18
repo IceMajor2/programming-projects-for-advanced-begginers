@@ -29,7 +29,21 @@ public class UserInterface {
                 makePhotomosaic();
                 continue;
             }
+            if("2".equals(choice)) {
+                cropSources();
+                continue;
+            }
         }
+    }
+    
+    public void cropSources() {
+        System.out.println("Processing...");
+        try {
+            ImageHandler.cropDataset();
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Success!");
     }
 
     public void makePhotomosaic() {

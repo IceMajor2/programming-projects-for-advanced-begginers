@@ -143,6 +143,7 @@ public class ImageHandler {
         for (File file : files) {
             BufferedImage img = ImageIO.read(file);
             var cropped = cropToSquare(img);
+            cropped = Scalr.resize(cropped, 75);
             ImageIO.write(cropped, "jpg", new File(PATH_TO_DATASET + File.separator
                     + "cropped" + File.separator + file.getName()));
         }

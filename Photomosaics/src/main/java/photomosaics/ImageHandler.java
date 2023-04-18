@@ -110,9 +110,12 @@ public class ImageHandler {
         return new int[]{redAvg, greenAvg, blueAvg};
     }
 
-    public static BufferedImage pixelate(BufferedImage img, int[][][] pxGroup, int groupDim) {
+    public static BufferedImage pixelate(BufferedImage img, int groupDim) {
         BufferedImage copy = DataHandler.copy(img);
         Graphics2D graph = copy.createGraphics();
+        
+        int[][][] pxGroup = pixelGroup(img, groupDim);
+        
         for (int row = 0; row < pxGroup.length; row++) {
 
             for (int column = 0; column < pxGroup[0].length; column++) {

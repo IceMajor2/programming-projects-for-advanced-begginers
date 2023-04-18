@@ -169,4 +169,12 @@ public class DataHandler {
             yaml.dump(map, writer);
         }
     }
+    
+    public static String getDotlessExtension(File file) {
+        return file.getName().substring(file.getName().lastIndexOf('.') + 1);
+    }
+    
+    public static String getNameMinusExtension(File file) {
+        return file.getName().substring(0, file.getName().lastIndexOf('.'));
+    }
 }

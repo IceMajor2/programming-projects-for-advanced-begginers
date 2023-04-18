@@ -1,9 +1,5 @@
 package photomosaics;
 
-import static photomosaics.Photomosaics.PATH_TO_DATASET;
-import static photomosaics.Photomosaics.PATH_TO_OUTPUT;
-import static photomosaics.Photomosaics.DIRECT_PATH_TO_VALUES;
-import static photomosaics.Photomosaics.IMGS_COLORS;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -24,12 +20,31 @@ import org.yaml.snakeyaml.Yaml;
 
 public class DataHandler {
 
+    public static Map<File, int[]> IMGS_COLORS = null;
+    public static String PATH_TO_INPUT = String.format("%s%s%s%s", "pictures",
+            File.separator, "input", File.separator);
+    public static String PATH_TO_OUTPUT = String.format("%s%s%s%s", "pictures",
+            File.separator, "output", File.separator);
+    public static String PATH_TO_DATASET = String.format("%s%s%s%s", "pictures",
+            File.separator, "dataset", File.separator);
+    public static String DIRECT_PATH_TO_VALUES = String.format("%s%s%s%s%s%s%s",
+            "src", File.separator, "main", File.separator, "resources",
+            File.separator, "dataset_RGB.yml");
+
     public static void outputImg(BufferedImage img, String imgName, String format) throws IOException {
         ImageIO.write(img, format, new File(PATH_TO_OUTPUT + imgName));
     }
 
     public static void outputImg(BufferedImage img, String imgName) throws IOException {
         outputImg(img, imgName, "jpg");
+    }
+
+    public static BufferedImage readImg(File imgFile) {
+        try {
+            return ImageIO.read(imgFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static BufferedImage copy(BufferedImage source) {
@@ -40,16 +55,24 @@ public class DataHandler {
         return b;
     }
 
-    public static File[] dataset() {
-        File dir = new File(PATH_TO_DATASET + "cropped" + File.separator);
-        File[] cropped = dir.listFiles(new FileFilter() {
+    public static File[] filesIn(String directoryPath) {
+        File dir = new File(directoryPath);
+        File[] files = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 String name = pathname.getName().toLowerCase();
                 return pathname.isFile();
             }
         });
-        return cropped;
+        return files;
+    }
+
+    public static File[] dataset() {
+        return filesIn(PATH_TO_DATASET + "cropped" + File.separator);
+    }
+
+    public static File[] inputs() {
+        return filesIn(PATH_TO_INPUT);
     }
 
     public static Map<File, int[]> loadValuesFromDir() {
@@ -73,7 +96,7 @@ public class DataHandler {
     }
 
     public static boolean isDatasetUpToDate(Map<File, int[]> yaml) {
-        if(yaml == null) {
+        if (yaml == null) {
             return false;
         }
         HashSet<File> filesYaml = new HashSet<>(yaml.keySet().stream()
@@ -85,9 +108,10 @@ public class DataHandler {
 
     public static void load() {
         Map<File, int[]> filesYaml = readYaml();
-        if(!isDatasetUpToDate(filesYaml)) {
-            System.out.println("Database was not up-to-date. Loading files...");
+        if (!isDatasetUpToDate(filesYaml)) {
+            System.out.println("Database was not up-to-date.\nLoading files...");
             filesYaml = loadValuesFromDir();
+            System.out.println("Files loaded successfully.");
         }
         IMGS_COLORS = filesYaml;
         writeYaml(IMGS_COLORS);
@@ -100,18 +124,18 @@ public class DataHandler {
         } catch (FileNotFoundException e) {
             return null;
         }
-        
+
         Yaml yaml = new Yaml();
-        
+
         Map<String, Object> data = yaml.load(inputStream);
         Map<File, int[]> output = new HashMap<>();
-        
-        for(var entry : data.entrySet()) {
+
+        for (var entry : data.entrySet()) {
             String key = entry.getKey();
             var value = (ArrayList) entry.getValue();
-            
+
             int[] rgbVals = new int[3];
-            
+
             rgbVals[0] = (int) value.get(0);
             rgbVals[1] = (int) value.get(1);
             rgbVals[2] = (int) value.get(2);

@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import javax.imageio.ImageIO;
 import org.imgscalr.Scalr;
-import static photomosaics.Photomosaics.PATH_TO_DATASET;
-import static photomosaics.Photomosaics.IMGS_COLORS;
+import static photomosaics.DataHandler.PATH_TO_DATASET;
+import static photomosaics.DataHandler.IMGS_COLORS;
 
 public class ImageHandler {
 

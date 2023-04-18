@@ -116,6 +116,7 @@ public class UserInterface {
         int groupDim = getPixelSize();
 
         System.out.println("Creating photomosaic...");
+        long start = System.currentTimeMillis();
         var mosaic = groupDim == -1 ? ImageHandler.photomosaic(img)
                 : ImageHandler.photomosaic(img, groupDim);
         try {
@@ -123,8 +124,8 @@ public class UserInterface {
             String noFormatName = DataHandler.getNameMinusExtension(imgFile);
             DataHandler.outputImg(mosaic, String.format("%s_mosaic.%s",
                     noFormatName, format), format);
-            System.out.println("Success!"
-                    + " See the output in the \"output\" folder.");
+            System.out.println("Success! (" + (System.currentTimeMillis() - start)
+                    + " ms) See the output in the \"output\" folder.");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

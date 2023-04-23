@@ -7,22 +7,24 @@ public class Snake {
     private LinkedList<int[]> body;
     private Directions direction;
 
-    public Snake(int x, int y, Directions dir) {
-        this.initBody(x, y);
+    public Snake(Directions dir, int[]... pos) {
+        this.initBody(pos);
         this.initDirection(dir);
     }
 
-    public void initBody(int x, int y) {
+    public void initBody(int[]... pos) {
         this.body = new LinkedList<>();
-        body.addFirst(new int[]{x, y});
+        for(int[] cords : pos) {
+            body.addLast(cords);
+        }
     }
     
     public void initDirection(Directions direction) {
         this.direction = direction;
     }
     
-    public void takeStep(int newX, int newY) {
-        body.addFirst(new int[]{newX, newY});
+    public void takeStep(int[] newPos) {
+        body.addFirst(newPos);
         body.removeLast();
     }
 

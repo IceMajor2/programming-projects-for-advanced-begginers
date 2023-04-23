@@ -33,7 +33,7 @@ public class Snake {
     }
     
     public int[] head() {
-        return body.getLast();
+        return body.getFirst();
     }
 
     public LinkedList<int[]> getBody() {

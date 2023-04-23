@@ -11,7 +11,7 @@ public class Game {
         this.height = height;
         this.width = width;
         this.board = new Object[height][width];
-        int[][] cords = {{0, 0}, {1, 0}, {2, 0}, {3, 0}};
+        int[][] cords = {{5, 4}, {4, 4}, {3, 4}, {2, 4}, {2, 3}, {2, 2}, {1, 2}};
         this.snake = new Snake(Directions.UP, cords);
     }
 

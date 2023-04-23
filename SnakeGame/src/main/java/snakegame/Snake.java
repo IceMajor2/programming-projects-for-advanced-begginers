@@ -35,6 +35,10 @@ public class Snake {
     public int[] head() {
         return body.getFirst();
     }
+
+    public LinkedList<int[]> getBody() {
+        return body;
+    }
 }
 
 enum Directions {

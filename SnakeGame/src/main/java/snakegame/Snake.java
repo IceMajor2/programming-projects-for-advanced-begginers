@@ -14,24 +14,27 @@ public class Snake {
 
     public void initBody(int[]... pos) {
         this.body = new LinkedList<>();
-        for(int[] cords : pos) {
+        for (int[] cords : pos) {
             body.addLast(cords);
         }
     }
-    
+
     public void initDirection(Directions direction) {
         this.direction = direction;
     }
-    
-    public void takeStep(int[] newPos) {
-        body.addFirst(newPos);
+
+    public void takeStep() {
+        int[] head = this.head();
+        int[] newHeadPos = {head[0] + direction.getCords()[0],
+            head[1] - direction.getCords()[1]};
+        body.addFirst(newHeadPos);
         body.removeLast();
     }
 
     public void setDirection(Directions direction) {
         this.direction = direction;
     }
-    
+
     public int[] head() {
         return body.getFirst();
     }

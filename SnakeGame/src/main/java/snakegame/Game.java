@@ -1,11 +1,18 @@
 package snakegame;
 
+import java.util.Map;
+import java.util.Scanner;
+
 public class Game {
 
+    private Map<Character, Directions> keyMap = Map.of('W', Directions.UP,
+            'A', Directions.LEFT, 'S', Directions.DOWN, 'D', Directions.RIGHT);
+    
     private Object[][] board;
     private Snake snake;
     private int height;
     private int width;
+    private Scanner scanner;
 
     public Game(int height, int width) {
         this.height = height;
@@ -13,6 +20,8 @@ public class Game {
         this.board = new Object[height][width];
         int[][] cords = {{5, 4}, {4, 4}, {3, 4}, {2, 4}, {2, 3}, {2, 2}, {1, 2}};
         this.snake = new Snake(Directions.UP, cords);
+        
+        this.scanner = new Scanner(System.in);
     }
 
     public void render() {
@@ -42,6 +51,16 @@ public class Game {
         }
 
         System.out.println(horBorder);
+    }
+    
+    public void makeMove() {
+        String usrInput = scanner.nextLine();
+        if(usrInput.isEmpty()) {
+            snake.takeStep();
+            return;
+        }
+        snake.setDirection(keyMap.get(Character.valueOf(usrInput.charAt(0))));
+        snake.takeStep();
     }
     
     private boolean isSnakesHead(int[] cords) {

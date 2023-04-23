@@ -12,14 +12,14 @@ public class Snake {
         this.initDirection(dir);
     }
 
-    public void initBody(int[]... pos) {
+    private void initBody(int[]... pos) {
         this.body = new LinkedList<>();
         for (int[] cords : pos) {
             body.addLast(cords);
         }
     }
 
-    public void initDirection(Directions direction) {
+    private void initDirection(Directions direction) {
         this.direction = direction;
     }
 
@@ -58,5 +58,15 @@ enum Directions {
 
     public int[] getCords() {
         return cords;
+    }
+    
+    public boolean isOpposite(Directions other) {
+        if((this == DOWN && other == UP) || (this == UP && other == DOWN)) {
+            return true;
+        }
+        if((this == LEFT && other == RIGHT) || (this == RIGHT && other == LEFT)) {
+            return true;
+        }
+        return false;
     }
 }

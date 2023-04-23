@@ -3,6 +3,7 @@ package snakegame;
 public class Game {
     
     private Object[][] board;
+    private Snake snake;
     private int height;
     private int width;
     
@@ -10,6 +11,8 @@ public class Game {
         this.height = height;
         this.width = width;
         this.board = new Object[height][width];
+        int[][] cords = {{0, 0}, {1, 0}, {2, 0}, {3, 0}};
+        this.snake = new Snake(Directions.UP, cords);
     }
     
     public void render() {

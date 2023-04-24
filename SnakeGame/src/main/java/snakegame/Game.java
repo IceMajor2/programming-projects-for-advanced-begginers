@@ -15,6 +15,7 @@ public class Game {
     private Apple apple;
     private int height;
     private int width;
+    private int score;
     private Scanner scanner;
 
     public Game(int height, int width) {
@@ -25,6 +26,7 @@ public class Game {
         this.initBoard(height, width);
         this.initSnake();
         this.initApple();
+        this.score = 0;
 
         this.scanner = new Scanner(System.in);
     }
@@ -37,10 +39,12 @@ public class Game {
                 this.updateBoard(newDir);
                 if (snakeOnApple()) {
                     snake.eatApple();
+                    score++;
                     this.initApple();
                 }
             } catch(IllegalStateException e) {
-                System.out.println("Snake has ate its own tail. You lose!");
+                System.out.println("You lose!\n"
+                        + "Score: " + this.score);
                 break;
             }
         }

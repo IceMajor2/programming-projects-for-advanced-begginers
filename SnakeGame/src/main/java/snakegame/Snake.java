@@ -40,6 +40,10 @@ public class Snake {
             if(node[0] == move[0] && node[1] == move[1]) {
                 return true;
             }
+            if(move[0] < 0 || move[0] >= Main.WIDTH
+                    || move[1] < 0 || move[1] >= Main.HEIGHT) {
+                return true;
+            }
         }
         return false;
     }

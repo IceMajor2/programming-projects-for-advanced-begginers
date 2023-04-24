@@ -30,13 +30,18 @@ public class Game {
     }
 
     public void start() {
-        while (!this.collided()) {
-            this.render();
-            Directions newDir = this.makeMove();
-            this.updateBoard(newDir);
-            if(snakeOnApple()) {
-                snake.eatApple();
-                this.initApple();
+        while (true) {
+            try {
+                this.render();
+                Directions newDir = this.makeMove();
+                this.updateBoard(newDir);
+                if (snakeOnApple()) {
+                    snake.eatApple();
+                    this.initApple();
+                }
+            } catch(IllegalStateException e) {
+                System.out.println("Snake has ate its own tail. You lose!");
+                break;
             }
         }
     }
@@ -151,14 +156,6 @@ public class Game {
         return newDir.isOpposite(prevDir) ? prevDir : newDir;
     }
 
-    private boolean collided() {
-        int[] headPos = snake.head();
-        if (isSnakesBody(headPos)) {
-            return true;
-        }
-        return false;
-    }
-    
     private boolean snakeOnApple() {
         var snakeHead = snake.head();
         var applePos = apple.getPosition();

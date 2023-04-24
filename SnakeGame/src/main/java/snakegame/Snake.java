@@ -23,12 +23,25 @@ public class Snake {
         this.direction = direction;
     }
 
-    public void takeStep() {
+    public void takeStep() throws IllegalStateException {
         int[] head = this.head();
         int[] newHeadPos = {head[0] + direction.getCords()[0],
             head[1] - direction.getCords()[1]};
         body.addFirst(newHeadPos);
         body.removeLast();
+        if(this.headCollision(newHeadPos)) {
+            throw new IllegalStateException();
+        }
+    }
+    
+    public boolean headCollision(int[] move) {
+        for(int i = 1; i < body.size(); i++) {
+            int[] node = body.get(i);
+            if(node[0] == move[0] && node[1] == move[1]) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public void eatApple() {

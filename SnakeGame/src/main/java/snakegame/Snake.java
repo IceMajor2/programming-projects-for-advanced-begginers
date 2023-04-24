@@ -35,8 +35,16 @@ public class Snake {
         this.direction = direction;
     }
 
+    public Directions getDirection() {
+        return direction;
+    }
+
     public int[] head() {
         return body.getFirst();
+    }
+    
+    public int[] tail() {
+        return body.getLast();
     }
 
     public LinkedList<int[]> getBody() {

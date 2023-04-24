@@ -29,10 +29,30 @@ public class Game {
         this.scanner = new Scanner(System.in);
     }
 
+    public void start() {
+        while (!this.collided()) {
+            this.render();
+            Directions newDir = this.makeMove();
+            this.updateBoard(newDir);
+        }
+    }
+
     private void initBoard(int height, int width) {
         this.height = height;
         this.width = width;
         this.board = new Object[height][width];
+    }
+
+    private void updateBoard(Directions snakeMove) {
+        var currHead = snake.head();
+        var currTail = snake.tail();
+        snake.setDirection(snakeMove);
+        snake.takeStep();
+        var nextHead = snake.head();
+        
+        board[currTail[1]][currTail[0]] = null;
+        board[currHead[1]][currHead[0]] = 'O';
+        board[nextHead[1]][nextHead[0]] = 'X';
     }
 
     private void initSnake() {
@@ -43,9 +63,11 @@ public class Game {
 
         int[][] body = new int[4][2];
         body[0] = head;
+        // head generated
 
         int[] prevNode = head;
         Directions prevDir = null;
+        // creating 3 more nodes - the tail
         for (int i = 1; i <= 3; i++) {
             Directions rndDir = Directions.values()[rnd.nextInt(4)];
             while (rndDir.isOpposite(prevDir)) {
@@ -58,6 +80,8 @@ public class Game {
             prevNode = node;
             prevDir = rndDir;
         }
+        // whole body is set
+        // giving snake default direction
         Directions dir = Directions.values()[rnd.nextInt(4)];
         int[] hypoMove = new int[]{head[0] + dir.getCords()[0],
             head[1] - dir.getCords()[1]};
@@ -68,13 +92,19 @@ public class Game {
                 head[1] - dir.getCords()[1]};
             snake.setDirection(dir);
         }
+        // snake all ready
+        // now setting the board object
+        board[head[1]][head[0]] = 'X';
+        for (int i = 1; i < body.length; i++) {
+            board[body[i][1]][body[i][0]] = 'O';
+        }
     }
 
     private void initApple() {
 
     }
 
-    public void render() {
+    private void render() {
         String horBorder = this.getHorizontalBorder();
         System.out.println(horBorder);
 
@@ -84,17 +114,11 @@ public class Game {
 
             for (int y = 0; y < board[i].length; y++) {
 
-                int[] currCords = new int[]{y, i};
-                if (isSnakesBody(currCords)) {
-                    if (isSnakesHead(currCords)) {
-                        System.out.print('X');
-                        continue;
-                    }
-                    System.out.print('O');
+                if (board[i][y] == null) {
+                    System.out.print(" ");
                     continue;
                 }
-
-                System.out.print(" ");
+                System.out.print(board[i][y]);
             }
 
             System.out.println("|");
@@ -103,14 +127,22 @@ public class Game {
         System.out.println(horBorder);
     }
 
-    public void makeMove() {
+    private Directions makeMove() {
         String usrInput = scanner.nextLine();
         if (usrInput.isEmpty()) {
-            snake.takeStep();
-            return;
+            return snake.getDirection();
         }
-        snake.setDirection(keyMap.get(Character.valueOf(usrInput.charAt(0))));
-        snake.takeStep();
+        Directions prevDir = snake.getDirection();
+        Directions newDir = keyMap.get(Character.valueOf(usrInput.charAt(0)));
+        return newDir.isOpposite(prevDir) ? prevDir : newDir;
+    }
+
+    private boolean collided() {
+        int[] headPos = snake.head();
+        if (isSnakesBody(headPos)) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isSnakesHead(int[] cords) {
@@ -121,6 +153,9 @@ public class Game {
     private boolean isSnakesBody(int[] cords) {
         var body = snake.getBody();
         for (int[] bodyPart : body) {
+            if (bodyPart[0] == snake.head()[0] && bodyPart[1] == snake.head()[1]) {
+                continue;
+            }
             if (bodyPart[0] == cords[0] && bodyPart[1] == cords[1]) {
                 return true;
             }

@@ -34,6 +34,10 @@ public class Game {
             this.render();
             Directions newDir = this.makeMove();
             this.updateBoard(newDir);
+            if(snakeOnApple()) {
+                snake.eatApple();
+                this.initApple();
+            }
         }
     }
 
@@ -49,7 +53,7 @@ public class Game {
         snake.setDirection(snakeMove);
         snake.takeStep();
         var nextHead = snake.head();
-        
+
         board[currTail[1]][currTail[0]] = null;
         board[currHead[1]][currHead[0]] = 'O';
         board[nextHead[1]][nextHead[0]] = 'X';
@@ -101,7 +105,17 @@ public class Game {
     }
 
     private void initApple() {
-
+        Random rnd = new Random();
+        int appleX = rnd.nextInt(width);
+        int appleY = rnd.nextInt(height);
+        int[] apple = new int[]{appleX, appleY};
+        while (isSnakesHead(apple) || isSnakesBody(apple)) {
+            appleX = rnd.nextInt(width);
+            appleY = rnd.nextInt(height);
+            apple = new int[]{appleX, appleY};
+        }
+        this.apple = new Apple(appleX, appleY);
+        board[appleY][appleX] = '*';
     }
 
     private void render() {
@@ -133,7 +147,7 @@ public class Game {
             return snake.getDirection();
         }
         Directions prevDir = snake.getDirection();
-        Directions newDir = keyMap.get(Character.valueOf(usrInput.charAt(0)));
+        Directions newDir = keyMap.get(usrInput.charAt(0));
         return newDir.isOpposite(prevDir) ? prevDir : newDir;
     }
 
@@ -143,6 +157,12 @@ public class Game {
             return true;
         }
         return false;
+    }
+    
+    private boolean snakeOnApple() {
+        var snakeHead = snake.head();
+        var applePos = apple.getPosition();
+        return snakeHead[0] == applePos[0] && snakeHead[1] == applePos[1];
     }
 
     private boolean isSnakesHead(int[] cords) {

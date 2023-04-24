@@ -2,8 +2,13 @@ package snakegame;
 
 public class Main {
 
+    public static int WIDTH;
+    public static int HEIGHT;
+    
     public static void main(String[] args) {
-        Game game = new Game(10, 20);
+        WIDTH = 20;
+        HEIGHT = 10;
+        Game game = new Game(HEIGHT, WIDTH);
         game.start();
     }
 }

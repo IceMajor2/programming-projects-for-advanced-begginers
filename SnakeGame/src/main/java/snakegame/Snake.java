@@ -30,6 +30,39 @@ public class Snake {
         body.addFirst(newHeadPos);
         body.removeLast();
     }
+    
+    public void eatApple() {
+        int[] last = this.tail();
+        int[] secLast = body.get(body.size() - 2);
+        int[] newLast = new int[2];
+        
+        int xDir = last[0] - secLast[0];
+        int yDir = last[1] - secLast[1];
+        
+        if(xDir != 0) {
+            newLast[0] = last[0] + xDir;
+            newLast[1] = last[1];
+        }
+        if(yDir != 0) {
+            newLast[0] = last[0];
+            newLast[1] = last[1] + yDir;
+        }
+        if(newLast[0] >= Main.WIDTH) {
+            newLast[0] = Main.WIDTH;
+            newLast[1]--;
+            if(newLast[1] < 0) {
+                newLast[1] += 2;
+            }
+        }
+        if(newLast[1] >= Main.HEIGHT) {
+            newLast[1] = Main.HEIGHT;
+            newLast[0]--;
+            if(newLast[0] < 0) {
+                newLast[0] += 2;
+            }
+        }
+        body.addLast(newLast);
+    }
 
     public void setDirection(Directions direction) {
         this.direction = direction;

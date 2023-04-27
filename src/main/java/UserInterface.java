@@ -19,7 +19,7 @@ public class UserInterface {
             System.out.print("Image file ('Y' to list images): ");
             imgName = scanner.nextLine();
             if (imgName.length() == 1 && imgName.equals("Y")) {
-                logic.listFiles(ASCIIArt.PATH + "\\imgs");
+                logic.listFiles(ASCIIArt.PATH + "imgs");
                 continue;
             }
             break;
@@ -30,7 +30,8 @@ public class UserInterface {
 
         while (true) {
 
-            logic.readImage(ASCIIArt.PATH + "imgs\\" + imgName);
+            logic.readImage(ASCIIArt.PATH + "imgs" + java.io.File.separator
+                    + imgName);
 
             printMenu(invertedStatus);
             char input = scanner.next().charAt(0);
@@ -42,10 +43,10 @@ public class UserInterface {
             if (input == '9') {
                 while (true) {
                     System.out.print("New file is (write 'Y' if you want to list"
-                            + "available images): ");
+                            + " available images): ");
                     imgName = scanner.nextLine();
                     if (imgName.length() == 1 && imgName.equals("Y")) {
-                        logic.listFiles(ASCIIArt.PATH + "\\imgs");
+                        logic.listFiles(ASCIIArt.PATH + "imgs");
                         continue;
                     }
                     break;

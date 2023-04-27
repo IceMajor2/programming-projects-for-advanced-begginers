@@ -16,8 +16,8 @@ public class ASCIIImageFileCreator {
         this.alghoritm = alghoritm;
         this.inverted = inverted;
         this.style = style;
-        writer = new FileWriter(ASCIIArt.PATH + "\\outputs\\"
-                + outputFileName(), Charset.forName("UTF-8"));
+        writer = new FileWriter(ASCIIArt.PATH + "outputs"
+                + java.io.File.separator + outputFileName(), Charset.forName("UTF-8"));
     }
 
     public void writeFile(String content) throws IOException {
@@ -32,7 +32,7 @@ public class ASCIIImageFileCreator {
         outputFile.append(alghoritm);
         outputFile.append("_s");
         outputFile.append(style);
-        if(inverted) {
+        if (inverted) {
             outputFile.append("_INV");
         }
         outputFile.append(".txt");

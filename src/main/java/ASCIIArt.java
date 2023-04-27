@@ -1,16 +1,11 @@
 
 import java.io.IOException;
+import java.io.Console;
 
 public class ASCIIArt {
-    
-    /*
-    TODO:
-            ASCII looks a bit stretched out - work on the width
-     */
-    
+
+    public static final String PATH = setPath();
     public static final char[][] STYLES = ProgramLogic.getStyles();
-    public static final String PATH
-            = "C:\\Users\\IceMajor\\Documents\\NetBeansProjects\\ASCIIArt\\";
     public static char[] CHARS = null;
 
     public static void main(String[] args) {
@@ -20,5 +15,13 @@ public class ASCIIArt {
         } catch (IOException e) {
             System.out.println(e);
         }
+    }
+
+    public static String setPath() {
+        Console console = System.console();
+        String separator = java.io.File.separator;
+        String path = console == null ? "" : String.format("..%s..%s..%s",
+                separator, separator, separator);
+        return path;
     }
 }

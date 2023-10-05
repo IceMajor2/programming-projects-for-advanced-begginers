@@ -1,0 +1,6 @@
+/target/
+*.class
+.idea
+
+/imgs/
+!/imgs/avt.jpg

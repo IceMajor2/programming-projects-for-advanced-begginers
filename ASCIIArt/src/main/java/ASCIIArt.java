@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Console;
 
@@ -18,10 +19,9 @@ public class ASCIIArt {
     }
 
     public static String setPath() {
-        Console console = System.console();
-        String separator = java.io.File.separator;
-        String path = console == null ? "" : String.format("..%s..%s..%s",
-                separator, separator, separator);
+        String targetClassesDir = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        File rootDir = new File(targetClassesDir).getParentFile().getParentFile();
+        String path = String.format("%s%s", rootDir.getAbsolutePath(), File.separator);
         return path;
     }
 }

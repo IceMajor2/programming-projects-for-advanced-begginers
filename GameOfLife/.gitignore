@@ -1,2 +1,4 @@
-/GameOfLife/target/
-GameOfLife.lnk
+/target/
+*.class
+
+.idea

@@ -26,7 +26,8 @@ public class ProgramLogic {
         return board;
     }
 
-    private void render(LifeBoard lBoard) {
+    private void render(LifeBoard lBoard) throws IOException, InterruptedException {
+        new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         Cell[][] board = lBoard.getBoard();
         for (int i = 0; i < board[0].length * 2 + 3; i++) {
             System.out.print("-");
@@ -45,7 +46,7 @@ public class ProgramLogic {
         System.out.println("");
     }
 
-    public void runForever(LifeBoard board, long delay) {
+    public void runForever(LifeBoard board, long delay) throws IOException, InterruptedException {
         if (board == null) {
             throw new NullPointerException();
         }
@@ -60,16 +61,11 @@ public class ProgramLogic {
         }
     }
 
-    public void runForever(LifeBoard board) {
-        runForever(board, 1000);
-    }
-
     private File readFile(String filename) {
         String targetClassesDir = Thread.currentThread().getContextClassLoader().getResource("").getPath();
         String rootDir = new File(targetClassesDir).getParentFile().getParentFile().getAbsolutePath();
         File boardsDir = new File(rootDir, "boards");
         String path = String.format("%s%s%s", boardsDir.getAbsolutePath(), File.separator, filename);
-        System.out.println(path);
         return new File(path);
     }
 }

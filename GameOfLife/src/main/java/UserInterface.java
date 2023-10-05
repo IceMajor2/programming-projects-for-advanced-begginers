@@ -12,7 +12,7 @@ public class UserInterface {
         this.logic = new ProgramLogic();
     }
 
-    public void run() throws IOException {
+    public void run() throws IOException, InterruptedException {
         System.out.print("Open LIFE from file? (hit ENTER for random) ");
         String file = scanner.nextLine();
         LifeBoard board = null;

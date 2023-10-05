@@ -6,7 +6,7 @@ public class GameOfLife {
         UserInterface UI = new UserInterface();
         try {
             UI.run();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
     }

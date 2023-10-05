@@ -1,7 +1,10 @@
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ASCIIImageFileCreator {
 
@@ -9,6 +12,7 @@ public class ASCIIImageFileCreator {
     private int style;
     private char alghoritm;
     private String imgName;
+    private String filepath;
     private boolean inverted;
 
     public ASCIIImageFileCreator(String imgName, char alghoritm, int style, boolean inverted) throws IOException {
@@ -16,8 +20,9 @@ public class ASCIIImageFileCreator {
         this.alghoritm = alghoritm;
         this.inverted = inverted;
         this.style = style;
-        writer = new FileWriter(ASCIIArt.PATH + "outputs"
-                + java.io.File.separator + outputFileName(), Charset.forName("UTF-8"));
+        this.filepath = ASCIIArt.PATH + "outputs" + File.separator;
+        Files.createDirectory(Path.of(filepath));
+        writer = new FileWriter(filepath + outputFileName(), Charset.forName("UTF-8"));
     }
 
     public void writeFile(String content) throws IOException {

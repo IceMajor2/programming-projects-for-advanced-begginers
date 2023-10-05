@@ -7,9 +7,7 @@ public class ProgramLogic {
 
     public Cell[][] loadStateFromTXT(String file) throws IOException {
         StringBuilder fileContent = new StringBuilder("");
-        Scanner scanner = new Scanner(new File(
-                "E:\\Dokumenty\\Projekty obecne\\[CODE]\\Programy\\PPfAB\\GameOfLife\\"
-                + file + ".txt"));
+        Scanner scanner = new Scanner(readFile(file));
         while (scanner.hasNextLine()) {
             fileContent.append(scanner.nextLine());
             fileContent.append("\n");
@@ -66,18 +64,12 @@ public class ProgramLogic {
         runForever(board, 1000);
     }
 
-    public void runTest() {
-        GameOfLife.board = new LifeBoard(12, 10);
-        Cell NK = new NaturalKiller(0, 0, 1);
-        GameOfLife.board.put(NK, 0, 0);
-        while (true) {
-            render(GameOfLife.board);
-            GameOfLife.board.nextBoardState();
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                System.out.println(e);
-            }
-        }
+    private File readFile(String filename) {
+        String targetClassesDir = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String rootDir = new File(targetClassesDir).getParentFile().getParentFile().getAbsolutePath();
+        File boardsDir = new File(rootDir, "boards");
+        String path = String.format("%s%s%s", boardsDir.getAbsolutePath(), File.separator, filename);
+        System.out.println(path);
+        return new File(path);
     }
 }

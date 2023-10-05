@@ -1,6 +1,8 @@
 # ASCII Art
 This program recreates an image using characters thus resulting in a so-called *ASCII Art*.
 
+![Example](https://github.com/IceMajor2/programming-projects-for-advanced-begginers/blob/e994930896aca1adef0db8130bf4c5aea638fb6a/ASCIIArt/example.png)
+
 There's an intuitive, self-explanatory command-line user interface.
 
 Before executing the rendering command, you may:
@@ -13,7 +15,7 @@ The text recreation will be available in the **`outputs`** folder that is locate
 
 Please note that the to-be-transformed images **have to** be put in the **`imgs`** folder which is - just like `outputs` - also located in the project's root directory.
 
-## Use
+## Setup
 Prerequisites:
 * Java
 * Maven

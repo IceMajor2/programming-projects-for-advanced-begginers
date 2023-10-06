@@ -15,11 +15,14 @@ public class UserInterface {
 
     public void run() {
         System.out.println("===Photomosaics===");
-        System.out.println("");
+        System.out.println("You may put your own dataset (images that will build other images) " +
+                "in the \"pictures\\dataset\" directory. Remember to reload the dataset afterwards.\n" +
+                "The images you want to consider manipulating should be put in \"pictures\\input\" directory.");
+        System.out.println("===");
         while (true) {
-            System.out.println("1. Make photomosaic");
-            System.out.println("2. Maybe pixelate?");
-            System.out.println("3. Crop (and load) dataset");
+            System.out.println("1. Make a photomosaic");
+            System.out.println("2. Pixelate an image");
+            System.out.println("3. Reload dataset");
             System.out.println("0. Exit");
             System.out.print("> ");
             String choice = scanner.nextLine();
@@ -98,7 +101,7 @@ public class UserInterface {
     }
 
     private int getPixelSize() {
-        System.out.println("Give size of a pixel. (Leave empty for automatic estimate)");
+        System.out.println("Give size of a pixel.");
         System.out.print("> ");
         String input = scanner.nextLine();
         int groupDim = -1;

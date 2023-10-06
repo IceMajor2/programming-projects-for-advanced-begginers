@@ -10,12 +10,16 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.FileInputStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+
 import org.yaml.snakeyaml.Yaml;
 
 public class DataHandler {
@@ -32,6 +36,9 @@ public class DataHandler {
             File.separator, "dataset_RGB.yml");
 
     public static void outputImg(BufferedImage img, String imgName, String format) throws IOException {
+        try {
+            Files.createDirectory(Path.of(PATH_TO_OUTPUT));
+        } catch (FileAlreadyExistsException e) {}
         ImageIO.write(img, format, new File(PATH_TO_OUTPUT + imgName));
     }
 
@@ -128,7 +135,7 @@ public class DataHandler {
         Yaml yaml = new Yaml();
 
         Map<String, Object> data = yaml.load(inputStream);
-        if(data == null) {
+        if (data == null) {
             return null;
         }
         Map<File, int[]> output = new HashMap<>();
@@ -172,11 +179,11 @@ public class DataHandler {
             yaml.dump(map, writer);
         }
     }
-    
+
     public static String getDotlessExtension(File file) {
         return file.getName().substring(file.getName().lastIndexOf('.') + 1);
     }
-    
+
     public static String getNameMinusExtension(File file) {
         return file.getName().substring(0, file.getName().lastIndexOf('.'));
     }

@@ -156,7 +156,7 @@ public class Game {
             return snake.getDirection();
         }
         Directions prevDir = snake.getDirection();
-        Directions newDir = keyMap.get(usrInput.charAt(0));
+        Directions newDir = keyMap.get(Character.toUpperCase(usrInput.charAt(0)));
         return newDir.isOpposite(prevDir) ? prevDir : newDir;
     }
 

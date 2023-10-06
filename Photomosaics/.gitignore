@@ -1,0 +1,5 @@
+.idea
+
+/pictures/output/
+/target/
+*.class

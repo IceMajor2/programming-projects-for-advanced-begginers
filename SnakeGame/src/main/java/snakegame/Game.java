@@ -1,7 +1,6 @@
 package snakegame;
 
 import java.util.Map;
-import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Random;
 

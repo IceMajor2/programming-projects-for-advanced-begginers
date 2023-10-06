@@ -59,6 +59,8 @@ public class UserInterface {
 
         File imgFile = userSelectingFile();
         var img = DataHandler.readImg(imgFile);
+        System.out.println("Give size of a pixel.");
+        System.out.print("> ");
         int groupDim = getPixelSize();
 
         System.out.println("Pixelating...");
@@ -101,8 +103,6 @@ public class UserInterface {
     }
 
     private int getPixelSize() {
-        System.out.println("Give size of a pixel.");
-        System.out.print("> ");
         String input = scanner.nextLine();
         int groupDim = -1;
         if (!input.isEmpty()) {
@@ -116,6 +116,8 @@ public class UserInterface {
 
         File imgFile = userSelectingFile();
         var img = DataHandler.readImg(imgFile);
+        System.out.println("Give size of a pixel (leave empty to default number).");
+        System.out.print("> ");
         int groupDim = getPixelSize();
 
         System.out.println("Creating photomosaic...");

@@ -11,7 +11,7 @@ Program that rewrites an image using ASCII characters.
 [See more.](https://github.com/IceMajor2/programming-projects-for-advanced-begginers/tree/main/ASCIIArt)
 
 ## GameOfLife
-[The Conway's game.](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+[The Conway's game.](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 
 [See more.](https://github.com/IceMajor2/programming-projects-for-advanced-begginers/tree/main/GameOfLife)
 
@@ -21,7 +21,7 @@ Transform images using... images.
 [See more.](https://github.com/IceMajor2/programming-projects-for-advanced-begginers/tree/main/Photomosaics)
 
 ## SnakeGame
-Maybe not as good as the [original](https://en.wikipedia.org/wiki/Snake_(video_game_genre))https://en.wikipedia.org/wiki/Snake_(video_game_genre), but hey!
+Maybe not as good as the [original](https://en.wikipedia.org/wiki/Snake_(video_game_genre)), but hey!
 
 [See more.](https://github.com/IceMajor2/programming-projects-for-advanced-begginers/tree/main/SnakeGame)
 

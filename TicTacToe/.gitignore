@@ -1,1 +1,4 @@
 TicTacToe.lnk
+/target/
+.idea
+*.class

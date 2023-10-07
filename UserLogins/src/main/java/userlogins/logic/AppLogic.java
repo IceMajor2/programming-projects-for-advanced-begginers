@@ -1,11 +1,11 @@
 package userlogins.logic;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
@@ -65,5 +65,15 @@ public class AppLogic {
             }
         }
         return false;
+    }
+
+    public static void createDatabaseDirIfNotExists() {
+        try {
+            Files.createDirectory(Paths.get("database"));
+        } catch (FileAlreadyExistsException e) {
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

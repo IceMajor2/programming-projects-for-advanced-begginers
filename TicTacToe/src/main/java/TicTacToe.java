@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class TicTacToe {
 
     public static HashMap<Integer, Integer> CACHE = new HashMap<>();
-    public static boolean CACHE_ENABLED = false;
+    public static boolean CACHE_ENABLED = true;
 
     public static void main(String[] args) {
         char[][] board = new char[3][3];
@@ -48,7 +48,7 @@ public class TicTacToe {
                             board = makeMove(board, cords, 'X');
                             break;
                         case '5':
-                            cords = minimaxAI(board, 'X', CACHE_ENABLED);
+                            cords = minimaxAI(board, 'X');
                             board = makeMove(board, cords, 'X');
                             break;
                     }
@@ -72,7 +72,7 @@ public class TicTacToe {
                             board = makeMove(board, cords, 'O');
                             break;
                         case '5':
-                            cords = minimaxAI(board, 'O', CACHE_ENABLED);
+                            cords = minimaxAI(board, 'O');
                             board = makeMove(board, cords, 'O');
                             break;
                     }
@@ -212,14 +212,14 @@ public class TicTacToe {
         return randomAI(board, player);
     }
 
-    public static int[] minimaxAI(char[][] board, char player, boolean withCache) {
+    public static int[] minimaxAI(char[][] board, char player) {
         int maxScore = -99;
         int[] bestMove = null;
 
         for (int[] move : getEmptySlots(board)) {
             char[][] hypoBoard = makeMove(board, move, player);
             char opponent = player == 'X' ? 'O' : 'X';
-            int minimaxScore = minimaxScore(hypoBoard, opponent, player, withCache);
+            int minimaxScore = minimaxScore(hypoBoard, opponent, player);
             if (minimaxScore > maxScore) {
                 maxScore = minimaxScore;
                 bestMove = move;
@@ -236,7 +236,7 @@ public class TicTacToe {
         return bestMove;
     }
 
-    public static int minimaxScore(char[][] board, char player, char AI, boolean withCache) {
+    public static int minimaxScore(char[][] board, char player, char AI) {
         char winner = winner(board);
         if (winner == AI) {
             return 10;
@@ -254,16 +254,11 @@ public class TicTacToe {
             char[][] hypoBoard = makeMove(board, move, player);
             char opponent = player == 'X' ? 'O' : 'X';
             int score = -11;
-            if (withCache) {
-                int key = boardHashValue(hypoBoard, player);
-                if (!CACHE.containsKey(key)) {
-                    score = minimaxScore(hypoBoard, opponent, AI, withCache);
-                    CACHE.put(key, score);
-                }
-                score = CACHE.get(key);
+            if(CACHE_ENABLED) {
+                score = minimaxWithCache(hypoBoard, opponent, AI);
             } else {
-                score = minimaxScore(hypoBoard, opponent, AI, withCache);
-            }
+                score = minimaxScore(hypoBoard, opponent, AI);
+            }   
             scores[i] = score;
             i++;
         }
@@ -275,13 +270,22 @@ public class TicTacToe {
         return min;
     }
 
+    public static int minimaxWithCache(char[][] board, char player, char AI) {
+        int boardKey = boardHashValue(board);
+        if (!CACHE.containsKey(boardKey)) {
+            int score = minimaxScore(board, player, AI);
+            CACHE.put(boardKey, score);
+        }
+        return CACHE.get(boardKey);
+    }
+
     public static int minimaxTieBreaker(char[][] board, int[] move) {
         int tieBreakerPts = inTheCorner(move) ? 1 : 0;
         tieBreakerPts += inRowPoints(board, move);
         return tieBreakerPts;
     }
 
-    public static int boardHashValue(char[][] board, char player) {
+    public static int boardHashValue(char[][] board) {
         StringBuilder sb = new StringBuilder("");
         for (char[] row : board) {
             for (char ch : row) {
@@ -292,7 +296,6 @@ public class TicTacToe {
                 sb.append(ch);
             }
         }
-        sb.append(player);
         return sb.toString().hashCode();
     }
 
